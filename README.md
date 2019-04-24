@@ -8,8 +8,8 @@ You might find them here or at other places
 * LoLin D1 mini [LoLin Shop on AliExpress](https://www.aliexpress.com/item/D1-mini-Mini-NodeMcu-4M-bytes-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266/32529101036.html) 
 * DHT22 Temperature Sensor [Electronicsfan Shop on AliExpress](https://www.aliexpress.com/item/DHT22-AM2302-Digital-Temperature-and-Humidity-Sensor-Replace-SHT11-SHT15/2033122954.html?spm=a2g0s.9042311.0.0.71404c4daJ73kf)
 * 5mm 940nm IR infrared LED Lamp (940nm, 1.2-1.4V, 100mA) [Electronicsfan Shop on AliExpress](https://www.aliexpress.com/item/50Pcs-5mm-940nm-IR-infrared-LED-Lamp/32224584146.html?spm=a2g0s.9042311.0.0.71404c4daJ73kf)
-
 * Double Side Prototype PCB Breadboard (40x60mm) [Electronicsfan  Shop on AliExpress](https://www.aliexpress.com/item/10PCS-Double-Side-Prototype-PCB-Bread-board-Tinned-Universal-4x6-cm-40x60-mm-FR4/32230580075.html?spm=a2g0s.9042311.0.0.71404c4daJ73kf)
+
 # Resources
 
 ## ESP8266
