@@ -24,7 +24,10 @@ A collection of links related to ESP8266 development boards
 You might be interested to learn about this
 * [SO: Figure out LED's Vf](https://electronics.stackexchange.com/questions/173468/easy-way-to-figure-out-a-leds-vf-in-order-to-pick-an-appropriate-resistor)
 * [SO: Hot to drive a 20ma LED from a 4ma max GPIO Pin](https://electronics.stackexchange.com/questions/60865/how-to-drive-a-20ma-led-from-a-4ma-max-gpio-pin)
-
+* [Soldering 101](https://www.instructables.com/id/Soldering-101-for-the-Beginner/)
+* Calculate resistor alternatives on [Wolfram Alpha](https://www.instructables.com/id/Soldering-101-for-the-Beginner/)
+* Fritzing Design Tool for electronic circuits [Download from fritzing.org](http://fritzing.org/home/)
+* Transistor as Switch (German only) on [Elektronik Kompendium](https://www.elektronik-kompendium.de/sites/slt/0208031.htm)
 ## Arduino
 * IRremote ESP8266 Library (https://github.com/markszabo/IRremoteESP8266)
 * IR Daikin Server (https://github.com/Andreaqc/IR-Daikin-Server-ESP8266)
