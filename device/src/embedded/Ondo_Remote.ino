@@ -1,10 +1,11 @@
-#include "DHT.h"
+#include <DHT.h>
 #include <ESP8266WiFi.h>
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 #include <ESP8266HTTPClient.h>
 #include <Losant.h>
 #include <ir_Daikin.h>
+#include <pins_arduino.h>
 #include "my_credentials.h"
 
 #define DHTPIN D3

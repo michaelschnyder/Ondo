@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\Program Files (x86)\\Arduino\\tools\\**",
+                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
+                "${HOMEPATH}\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
+                "${HOMEPATH}\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.5.2\\**",
+                "${HOMEPATH}\\Arduino\\libraries\\PubSubClient\\src",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\losant-mqtt-arduino\\src",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\Adafruit_Unified_Sensor",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\DHT_sensor_library"
+            ],
+            "forcedInclude": [],
+            "intelliSenseMode": "msvc-x64",
+            "defines": [
+                "ARDUINO=1000"
+            ]
+        }
+    ],
+    "version": 4
+}
