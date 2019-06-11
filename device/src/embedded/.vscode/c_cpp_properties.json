@@ -7,7 +7,7 @@
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
                 "${HOMEPATH}\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
                 "${HOMEPATH}\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.5.2\\**",
-                "${HOMEPATH}\\Arduino\\libraries\\PubSubClient\\src",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\PubSubClient\\src",
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\losant-mqtt-arduino\\src",
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src",
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
