@@ -6,7 +6,9 @@
 #include <Losant.h>
 #include <ir_Daikin.h>
 #include <pins_arduino.h>
+
 #include "my_credentials.h"
+#include "cloudClient.cpp"
 
 #define DHTPIN D3
 #define DHTTYPE DHT22   
@@ -21,6 +23,9 @@ LosantDevice device(LOSANT_DEVICE_ID);
 void setup() {
   Serial.begin(115200);
   Serial.setTimeout(2000);
+
+  CloudClient client;
+  client.call();
 
   dht.begin();
 
