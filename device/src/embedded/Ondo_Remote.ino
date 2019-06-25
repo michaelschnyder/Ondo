@@ -10,6 +10,7 @@
 #include "my_credentials.h"
 #include "cloudClient.cpp"
 
+#include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
 #define DHTPIN D3
 #define DHTTYPE DHT22   
 #define IRPIN D2
@@ -19,6 +20,7 @@ DHT dht(DHTPIN, DHTTYPE);
 WiFiClient wifiClient;
 IRDaikinESP dakinir(IRPIN);
 LosantDevice device(LOSANT_DEVICE_ID);
+WiFiManager wifiManager;
 
 void setup() {
   Serial.begin(115200);
@@ -39,10 +41,26 @@ void setup() {
   
   device.onCommand(&handleCommand);
   
-  connect();
+  setupAndConnectWifi();
 }
 
-void connect() {
+void setupAndConnectWifi() {
+  byte mac[6]; 
+  WiFi.macAddress(mac);
+
+  char setupSSID[10];
+  sprintf(setupSSID, "Ondo-%2X%2X%2X%2X", mac[2], mac[3], mac[4], mac[5]);
+
+  if (!wifiManager.autoConnect(setupSSID)) {
+    Serial.println("failed to connect and hit timeout");
+    delay(3000);
+    //reset and try again, or maybe put it to deep sleep
+    ESP.reset();
+    delay(5000);
+  }
+}
+
+void connectToWiFi() {
   Serial.print("Connecting to ");
   Serial.println(WIFI_SSID);
 
@@ -177,7 +195,7 @@ void loop() {
   }
 
   if (toReconnect) {
-    connect();
+    connectToWiFi();
   }
 
   device.loop();
