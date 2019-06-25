@@ -11,9 +11,13 @@
 #include "cloudClient.cpp"
 
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
+#include <DoubleResetDetector.h>
+
 #define DHTPIN D3
 #define DHTTYPE DHT22   
 #define IRPIN D2
+#define DRD_TIMEOUT 1
+#define DRD_ADDRESS 0
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -21,6 +25,8 @@ WiFiClient wifiClient;
 IRDaikinESP dakinir(IRPIN);
 LosantDevice device(LOSANT_DEVICE_ID);
 WiFiManager wifiManager;
+DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
+
 void setup() {  
 
   Serial.println("Device Started");
@@ -39,6 +45,12 @@ void setup() {
 
   device.onCommand(&handleCommand);
   
+
+  if (drd.detectDoubleReset()) {
+    Serial.println("Resetting WiFi-Information");
+    wifiManager.resetSettings();
+  } 
+
   setupAndConnectWifi();
   validateLosantConnection();
   connectToLosant();
@@ -49,7 +61,7 @@ void setupAndConnectWifi() {
   WiFi.macAddress(mac);
 
   char setupSSID[10];
-  sprintf(setupSSID, "Ondo-%2X%2X%2X%2X", mac[2], mac[3], mac[4], mac[5]);
+  sprintf(setupSSID, "Ondo-%2x%2x%2x%2x", mac[2], mac[3], mac[4], mac[5]);
 
   if (!wifiManager.autoConnect(setupSSID)) {
     Serial.println("failed to connect and hit timeout");
@@ -188,6 +200,9 @@ void handleCommand(LosantCommand *command) {
 int timeSinceLastRead = 0;
 
 void loop() {
+
+  drd.loop();
+
    bool toReconnect = false;
 
   if (WiFi.status() != WL_CONNECTED) {
