@@ -43,8 +43,7 @@ void setup() {
   // Wait for serial to initialize.
   while(!Serial) { }
 
-  device.onCommand(&handleCommand);
-  
+  device.onCommand(&handleCommand);  
 
   if (drd.detectDoubleReset()) {
     Serial.println("Resetting WiFi-Information");
