@@ -72,25 +72,6 @@ void setupAndConnectWifi() {
   }
 }
 
-void connectToWiFi() {
-  Serial.print("Connecting to ");
-  Serial.println(WIFI_SSID);
-
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  Serial.print("Authenticating Device...");
-  
-  }
-
 void validateLosantConnection() {
   HTTPClient http;
   http.begin("http://api.losant.com/auth/device");
@@ -217,7 +198,7 @@ void loop() {
   }
 
   if (toReconnect) {
-    connectToWiFi();
+    setupAndConnectWifi();
   }
 
   device.loop();
