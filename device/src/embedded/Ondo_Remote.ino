@@ -21,8 +21,11 @@ WiFiClient wifiClient;
 IRDaikinESP dakinir(IRPIN);
 LosantDevice device(LOSANT_DEVICE_ID);
 WiFiManager wifiManager;
+void setup() {  
 
-void setup() {
+  Serial.println("Device Started");
+  Serial.println("-------------------------------------");
+  
   Serial.begin(115200);
   Serial.setTimeout(2000);
 
@@ -34,11 +37,6 @@ void setup() {
   // Wait for serial to initialize.
   while(!Serial) { }
 
-  Serial.println("Device Started");
-  Serial.println("-------------------------------------");
-  Serial.println("Running DHT!");
-  Serial.println("-------------------------------------");
-  
   device.onCommand(&handleCommand);
   
   setupAndConnectWifi();
