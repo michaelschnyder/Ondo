@@ -117,14 +117,22 @@ void connectToLosant() {
 
   device.connect(wifiClient, LOSANT_ACCESS_KEY, LOSANT_ACCESS_SECRET);
 
-  while(!device.connected()) {
+  int attemptToConnect = 1;
+
+  while(!device.connected() && attemptToConnect <= 5) {
     delay(500);
     Serial.print(".");
-  }
+    attemptToConnect++;
+  } 
 
-  Serial.println("Connected!");
-  Serial.println();
-  Serial.println("This device is now ready for use!");
+  if (device.connected()) {
+    Serial.println("Connected!");
+    Serial.println();
+    Serial.println("This device is now ready for use!");
+  }
+  else {
+    Serial.println("ERR: Device is not connected to cloud backend");
+  }
 }
 
 void handleCommand(LosantCommand *command) {
