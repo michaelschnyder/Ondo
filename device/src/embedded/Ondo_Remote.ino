@@ -40,6 +40,8 @@ void setup() {
   device.onCommand(&handleCommand);
   
   setupAndConnectWifi();
+  validateLosantConnection();
+  connectToLosant();
 }
 
 void setupAndConnectWifi() {
@@ -74,6 +76,10 @@ void connectToWiFi() {
   Serial.println(WiFi.localIP());
 
   Serial.print("Authenticating Device...");
+  
+  }
+
+void validateLosantConnection() {
   HTTPClient http;
   http.begin("http://api.losant.com/auth/device");
   http.addHeader("Content-Type", "application/json");
@@ -108,6 +114,9 @@ void connectToWiFi() {
    }
 
   http.end();
+}
+
+void connectToLosant() {
 
   // Connect to Losant.
   Serial.println();
