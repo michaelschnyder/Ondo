@@ -1,2 +1,3 @@
 device/src/embedded/build/
 device/src/embedded/.vscode/ipch/
+device/src/embedded/.vs/
