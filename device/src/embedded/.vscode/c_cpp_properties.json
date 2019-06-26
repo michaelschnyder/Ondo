@@ -12,7 +12,9 @@
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src",
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\Adafruit_Unified_Sensor",
-                "${HOMEPATH}\\Documents\\Arduino\\libraries\\DHT_sensor_library"
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\DHT_sensor_library",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\WiFiManager",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\DoubleResetDetector"
             ],
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64",
