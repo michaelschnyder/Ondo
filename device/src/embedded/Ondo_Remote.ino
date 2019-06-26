@@ -191,21 +191,27 @@ void loop() {
 
   drd.loop();
 
-   bool toReconnect = false;
+   bool wifiNeedsReconnect = false;
+   bool losantNeedsReconnect = false;
 
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("Disconnected from WiFi");
-    toReconnect = true;
+    wifiNeedsReconnect = true;
   }
 
   if (!device.connected()) {
     Serial.println("Disconnected from MQTT");
     Serial.println(device.mqttClient.state());
-    toReconnect = true;
+    losantNeedsReconnect = true;
   }
 
-  if (toReconnect) {
+  if (wifiNeedsReconnect) {
     setupAndConnectWifi();
+  }
+
+  if (losantNeedsReconnect) {
+    validateLosantConnection();
+    connectToLosant();
   }
 
   device.loop();
