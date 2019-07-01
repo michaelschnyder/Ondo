@@ -8,7 +8,7 @@
 #include <ir_Daikin.h>
 #include <pins_arduino.h>
 
-#include <AutoConnect.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
+#include <AutoConnect.h>
 
 #include "my_credentials.h"
 #include "cloudClient.cpp"
