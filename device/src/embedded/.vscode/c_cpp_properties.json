@@ -13,8 +13,8 @@
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\Adafruit_Unified_Sensor",
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\DHT_sensor_library",
-                "${HOMEPATH}\\Documents\\Arduino\\libraries\\WiFiManager",
-                "${HOMEPATH}\\Documents\\Arduino\\libraries\\DoubleResetDetector"
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\AutoConnect\\src",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\PageBuilder\\src"
             ],
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64",
