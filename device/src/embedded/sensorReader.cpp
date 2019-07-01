@@ -8,7 +8,7 @@ class SensorReader {
         unsigned long previousMillis = 0;
         
         // update interval:
-        const long interval = 1000; 
+        const long interval = 2000; 
 
         void updateReadings() {
 
@@ -71,7 +71,8 @@ class SensorReader {
             unsigned long currentMillis = millis();
 
             if (currentMillis - previousMillis >= interval && previousMillis + interval < 0) {
-                // save the last time we read the data the LED
+                
+                // save the last time we read the data from sensor
                 previousMillis = currentMillis;
 
                 updateReadings();
