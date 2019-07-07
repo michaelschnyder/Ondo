@@ -12,7 +12,7 @@
 
 #include "my_credentials.h"
 #include "cloudClient.cpp"
-#include "sensorReader.cpp"
+#include "SensorReader.h"
 
 #define DHTPIN 0 //D3 = 0
 #define DHTTYPE DHT22   
