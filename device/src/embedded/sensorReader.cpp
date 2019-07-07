@@ -1,5 +1,6 @@
 #include <DHT.h>
 
+typedef void (*MeasurementCallback)(float, float, float, float, float);
 
 class SensorReader {
  
@@ -9,6 +10,8 @@ class SensorReader {
         
         // update interval:
         const long interval = 2000; 
+
+        MeasurementCallback updateCallback = NULL;
 
         void updateReadings() {
 
@@ -56,8 +59,8 @@ class SensorReader {
     public:
         SensorReader(int gpio, int type) : sensor(gpio, type) { }
 
-        float tempF;
         float tempC;
+        float tempF;
         float humidity;
         float heatIndexC;
         float heatIndexF;
@@ -70,13 +73,22 @@ class SensorReader {
 
             unsigned long currentMillis = millis();
 
-            if (currentMillis - previousMillis >= interval || previousMillis + interval < 0) {
+            if (currentMillis - previousMillis >= interval || previousMillis <= interval) {
                 
                 // save the last time we read the data from sensor
                 previousMillis = currentMillis;
 
                 updateReadings();
                 printLastReadingOnConsole();
+
+                if (updateCallback != NULL) {
+                    updateCallback(tempC, tempF, humidity, heatIndexC, heatIndexF);
+                }
+
             }
+        }
+
+        void onUpdate(MeasurementCallback callback) {
+            SensorReader::updateCallback = callback;
         }
 };

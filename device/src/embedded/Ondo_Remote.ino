@@ -48,6 +48,7 @@ void setup() {
   Server.on("/", rootPage);
 
   device.onCommand(&handleCommand);  
+  sensorReader.onUpdate(&handleSensorUpdate);
 
   setupAndConnectWifi();
   // validateLosantConnection();
@@ -201,12 +202,14 @@ void loop() {
   Portal.handleClient();
 }
 
-void report(double humidity, double tempC, double tempF, double heatIndexC, double heatIndexF, bool acPower) {
+void handleSensorUpdate(float humidity, float tempC, float tempF, float heatIndexC, float heatIndexF) {
+  
   StaticJsonBuffer<500> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   root["roomHumidity"] = humidity;
   root["roomTemp"] = tempC;
-  root["acPower"] = acPower;
+  // root["acPower"] = acPower;
+  
   device.sendState(root);
   Serial.println("Reported!");
 }
