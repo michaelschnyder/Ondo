@@ -11,7 +11,7 @@
 #include <AutoConnect.h>
 
 #include "my_credentials.h"
-#include "cloudClient.cpp"
+//#include "CloudClient.h"
 #include "SensorReader.h"
 
 #define DHTPIN 0 //D3 = 0
@@ -28,6 +28,7 @@ AutoConnect      Portal(Server);
 AutoConnectConfig  config;
 
 SensorReader sensorReader(DHTPIN, DHTTYPE);
+//CloudClient client;
 
 void setup() {  
 
@@ -42,12 +43,12 @@ void setup() {
   // Wait for serial to initialize.
   while(!Serial) { }
 
-  CloudClient client;
-  client.call();
+
+  //client.setup();
 
   Server.on("/", rootPage);
 
-  device.onCommand(&handleCommand);  
+  //device.onCommand(&handleCommand);  
   sensorReader.onUpdate(&handleSensorUpdate);
 
   setupAndConnectWifi();
@@ -172,29 +173,13 @@ void handleCommand(LosantCommand *command) {
     int16_t temperature = root["temperature"];
     int16_t fan = root["fan"];
 
-    dakinir.begin();
-
-    if(statuss){
-      dakinir.on();
-    }else{
-      dakinir.off();
-    }
-  
-
-    dakinir.setFan(fan);
-    dakinir.setMode(kDaikinCool);
-    dakinir.setTemp(temperature);
-    dakinir.setQuiet(quiet);
-    dakinir.setPowerful(powerful);
-    
-    dakinir.setSwingVertical(false);
-    dakinir.setSwingHorizontal(false);
-
-    dakinir.send();
+    handleSetAcCommand(statuss, fan, temperature, quiet, powerful);
   }
 }
 
 void loop() {
+
+  // client.loop();
 
   // device.loop();
   sensorReader.loop();
@@ -212,4 +197,27 @@ void handleSensorUpdate(float humidity, float tempC, float tempF, float heatInde
   
   device.sendState(root);
   Serial.println("Reported!");
+}
+
+void handleSetAcCommand(bool status, int16_t fanLevel, int16_t tempC, bool quiet, bool powerful) {
+    
+    dakinir.begin();
+
+    if(status){
+      dakinir.on();
+    }else{
+      dakinir.off();
+    }
+  
+
+    dakinir.setFan(fanLevel);
+    dakinir.setMode(kDaikinCool);
+    dakinir.setTemp(tempC);
+    dakinir.setQuiet(quiet);
+    dakinir.setPowerful(powerful);
+    
+    dakinir.setSwingVertical(false);
+    dakinir.setSwingHorizontal(false);
+
+    dakinir.send();
 }
