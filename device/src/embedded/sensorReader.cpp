@@ -73,7 +73,7 @@ class SensorReader {
 
             unsigned long currentMillis = millis();
 
-            if (currentMillis - previousMillis >= interval || previousMillis <= interval) {
+            if (currentMillis - previousMillis >= interval) {
                 
                 // save the last time we read the data from sensor
                 previousMillis = currentMillis;
