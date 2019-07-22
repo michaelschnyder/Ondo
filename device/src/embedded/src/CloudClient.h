@@ -2,28 +2,22 @@
 #define CloudClient_h
 
 #include <stdint.h>
-#include <Losant.h>
-#include <ESP8266HTTPClient.h>
+#include <ESP8266WiFi.h>
+#include <ArduinoJson.h>
 
 typedef void (*SetAcCommandCallback)(bool, int16_t, int16_t, bool, bool);
 
 class CloudClient {
 private:
-
-    const char* MQTT_DEVICE_ID = "xxxxxxxxxxxxxxxxxxxxxxx";
-    const char* MQTT_ACCESS_KEY = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
-    const char* MQTT_ACCESS_SECRET = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-
     WiFiClient wifiClient;
 
-    void validateLosantConnection();
-    void connectToLosant();
+    void connect();
     
 public:
     CloudClient(WiFiClient);   
-       
+    
     void setup();
-    static SetAcCommandCallback setAcCommandCallback = NULL;
+    static SetAcCommandCallback setAcCommandCallbackr;
     
     void onSetAcCommand(SetAcCommandCallback callback);
 	void loop();

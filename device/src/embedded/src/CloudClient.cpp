@@ -9,7 +9,7 @@ CloudClient::CloudClient(WiFiClient wificlient) {
 void CloudClient::setup() {
 
   // TODO: Register for topics
-  device.onCommand(&handleCommand);
+  // device.onCommand(&handleCommand);
 }
 
 void CloudClient::loop() {
@@ -18,13 +18,16 @@ void CloudClient::loop() {
 
 void CloudClient::send(JsonObject& data) {
   // TODO: Use Pubsub to send
-  CloudClient::device.sendState(data);
+  // CloudClient::device.sendState(data);
+
+  //IoTHubClient_LL_SendEventAsync
 }
 
 void CloudClient::onSetAcCommand(SetAcCommandCallback callback) {
-    CloudClient::setAcCommandCallback = callback;
+    //CloudClient::setAcCommandCallback = callback;
 }
 
+/*/
 void CloudClient::connectToLosant() {
 
   // Connect to Losant.
@@ -49,9 +52,14 @@ void CloudClient::connectToLosant() {
   else {
     Serial.println("ERR: Device is not connected to cloud backend");
   }
-}
 
+
+}
+*/
+
+/*
 void handleCommand(LosantCommand *command) {
+
   Serial.println();
   Serial.print("Command received: ");
   Serial.println(command->name);
@@ -84,4 +92,4 @@ void handleCommand(LosantCommand *command) {
         CloudClient::setAcCommandCallback(statuss, fan, temperature, quiet, powerful);
     }
   }
-}
+}*/
