@@ -1,11 +1,7 @@
 void setup() {
-  // put your setup code here, to run once:
-
   /*
-  
   How to flash files to ESP8266
   =============================
-
 
   1. You need arduino studio
   2. Install the ESP8266 SPIFFS Flash Tool for android studio
@@ -21,10 +17,10 @@ void setup() {
 
   ATTENTION: Flashing the firmware *must* have the exact same Flash
   config when programming. Otherwise files would be corrupted
-   */
+  See: https://github.com/diyhue/Lights/issues/23#issuecomment-468899401
+  */
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
 }
