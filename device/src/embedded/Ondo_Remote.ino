@@ -1,4 +1,3 @@
-
 #include <ESP8266WebServer.h>  
 #include <ESP8266WiFi.h>
 #include <IRremoteESP8266.h>
@@ -6,10 +5,9 @@
 #include <ir_Daikin.h>
 #include <pins_arduino.h>
 
-#include <AutoConnect.h>
-
 #include "src/CloudClient.h"
 #include "src/SensorReader.h"
+#include "src/AppConfig.h"
 
 #define DHTPIN 0 //D3 = 0
 #define DHTTYPE DHT22   
@@ -19,12 +17,9 @@
 WiFiClient wifiClient;
 IRDaikinESP dakinir(IRPIN);
 
-ESP8266WebServer Server;          
-AutoConnect      Portal(Server);
-AutoConnectConfig  config;
-
 SensorReader sensorReader(DHTPIN, DHTTYPE);
 CloudClient cloudClient(wifiClient);
+AppConfig config;
 
 void setup() {
 
@@ -37,7 +32,13 @@ void setup() {
   // Wait for serial to initialize.
   while(!Serial) { }
 
-  Server.on("/", rootPage);
+  if (!SPIFFS.begin()) {
+    SPIFFS.format();
+    Serial.println("ERROR: Unable to start filesystem.");
+  }
+  else {
+    config.load();
+  }
 
   cloudClient.onSetAcCommand(&handleSetAcCommand);
   sensorReader.onUpdate(&handleSensorUpdate);
@@ -49,34 +50,33 @@ void setup() {
 }
 
 void setupAndConnectWifi() {
+  Serial.print("Connecting to '" + config.getWifiSSID() + "'");
+
+  WiFi.begin(config.getWifiSSID(), config.getWifiKey());
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println();
+
+  Serial.print("Connected, IP address: ");
+  Serial.println(WiFi.localIP());
+
   byte mac[6]; 
   WiFi.macAddress(mac);
 
-  char setupSSID[10];
-  sprintf(setupSSID, "Ondo-%2x%2x%2x%2x", mac[2], mac[3], mac[4], mac[5]);
+  char deviceName[10];
+  sprintf(deviceName, "Ondo-%2x%2x%2x%2x", mac[2], mac[3], mac[4], mac[5]);
 
-  config.title = "Configuration";
-  config.apid = setupSSID;
-  config.psk = "";
-
-  Portal.config(config);
-
-  if (Portal.begin()) {
-    Serial.println("WiFi connected: " + WiFi.localIP().toString());
-  }
-}
-
-void rootPage() {
-  char content[] = "Hello, world";
-  Server.send(200, "text/plain", content);
+  Serial.print("Device name: ");
+  Serial.println(deviceName);
 }
 
 void loop() {
-
   sensorReader.loop();
   cloudClient.loop();
-  
-  Portal.handleClient();
 }
 
 void handleSensorUpdate(float humidity, float tempC, float tempF, float heatIndexC, float heatIndexF) {
@@ -88,7 +88,7 @@ void handleSensorUpdate(float humidity, float tempC, float tempF, float heatInde
   // root["acPower"] = acPower;
   
   cloudClient.send(root);
-  Serial.println("Reported!");
+  // Serial.println("Reported!");
 }
 
 void handleSetAcCommand(bool status, int16_t fanLevel, int16_t tempC, bool quiet, bool powerful) {
