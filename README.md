@@ -20,6 +20,11 @@ A collection of links related to ESP8266 development boards
 * [LoLin Node MCU v3 Pinout](https://www.instructables.com/id/NodeMCU-ESP8266-Details-and-Pinout/), at Step 7/8
 * [SO: LoLin Node MCU v3 BuiltIn LED](https://arduino.stackexchange.com/questions/38477/does-the-node-mcu-v3-lolin-not-have-a-builtin-led) or https://gist.github.com/jhorsman/6a93191ba31a48cf0cea75acd4c20cea
 
+## Azure IoT Hub
+* Create a new IoTHub (https://catalog.azureiotsolutions.com/docs?title=Azure/azure-iot-device-ecosystem/setup_iothub)
+* IoT Device Explorer, to create SAS tokens (https://catalog.azureiotsolutions.com/docs?title=Azure/azure-iot-device-ecosystem/manage_iot_hub)
+* Connecting to Azure IoT Hub via Standard PubSub Arduino Library (http://www.radupascal.com/2016/04/03/esp8266-arduino-iot-hub) 
+
 ## Electronics
 You might be interested to learn about this
 * [SO: Figure out LED's Vf](https://electronics.stackexchange.com/questions/173468/easy-way-to-figure-out-a-leds-vf-in-order-to-pick-an-appropriate-resistor)

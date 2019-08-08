@@ -12,12 +12,20 @@ private:
     char wifiSSID[33];
     char wifiKey[33]; 
 
+    // Name max lenght: 50 (according to azure)
+    char azIoTHubName[51];
+
+    // Unknown max lenght, taking 128
+    char azIoTSASToken[129]; 
+
 public:
     AppConfig();   
     void load();
 
     String getWifiSSID();
     String getWifiKey();
+    String getAzIoTHubName();
+    String getAzIoTSASToken();
 };
 
 #endif

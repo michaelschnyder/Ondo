@@ -4,6 +4,7 @@
 #include <IRsend.h>
 #include <ir_Daikin.h>
 #include <pins_arduino.h>
+#include <time.h>
 
 #include "src/CloudClient.h"
 #include "src/SensorReader.h"
@@ -14,42 +15,58 @@
 
 #define IRPIN 4 //D2 = 4
 
+AppConfig config;
 WiFiClient wifiClient;
+WiFiClientSecure wifiClientSecure;
+
 IRDaikinESP dakinir(IRPIN);
 
 SensorReader sensorReader(DHTPIN, DHTTYPE);
-CloudClient cloudClient(wifiClient);
-AppConfig config;
+CloudClient cloudClient(config);
 
 void setup() {
 
-  Serial.println("Device Started");
-  Serial.println("-------------------------------------");
-  
   Serial.begin(115200);
   Serial.setTimeout(2000);
 
   // Wait for serial to initialize.
   while(!Serial) { }
 
+  Serial.println("\nDevice Started");
+  Serial.println("-------------------------------------");
+  
+  byte mac[6]; 
+  WiFi.macAddress(mac);
+
+  char deviceName[10];
+  sprintf(deviceName, "Ondo-%2x%2x%2x%2x%2x%2x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  Serial.print("Device Id: ");
+  Serial.println(deviceName);
+  Serial.println("-------------------------------------\n");
+
+
   if (!SPIFFS.begin()) {
     SPIFFS.format();
     Serial.println("ERROR: Unable to start filesystem.");
   }
   else {
+    Serial.println("INFO: Filesystem ready. Loading configuration...");
     config.load();
   }
+
 
   cloudClient.onSetAcCommand(&handleSetAcCommand);
   sensorReader.onUpdate(&handleSensorUpdate);
 
   sensorReader.setup();
-  cloudClient.setup();
 
   setupAndConnectWifi();
+
+  cloudClient.setup(deviceName);
 }
 
-void setupAndConnectWifi() {
+void setupAndConnectWifi() { 
+  WiFi.mode(WIFI_STA);
   Serial.print("Connecting to '" + config.getWifiSSID() + "'");
 
   WiFi.begin(config.getWifiSSID(), config.getWifiKey());
@@ -63,15 +80,6 @@ void setupAndConnectWifi() {
 
   Serial.print("Connected, IP address: ");
   Serial.println(WiFi.localIP());
-
-  byte mac[6]; 
-  WiFi.macAddress(mac);
-
-  char deviceName[10];
-  sprintf(deviceName, "Ondo-%2x%2x%2x%2x", mac[2], mac[3], mac[4], mac[5]);
-
-  Serial.print("Device name: ");
-  Serial.println(deviceName);
 }
 
 void loop() {

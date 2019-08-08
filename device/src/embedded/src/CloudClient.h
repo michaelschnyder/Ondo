@@ -4,19 +4,25 @@
 #include <stdint.h>
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
+#include "PubSubClient.h"
+
+#include "AppConfig.h"
 
 typedef void (*SetAcCommandCallback)(bool, int16_t, int16_t, bool, bool);
 
 class CloudClient {
 private:
-    WiFiClient wifiClient;
-
-    void connect();
+    BearSSL::WiFiClientSecure wifiClient;
+    AppConfig& config;
+    PubSubClient client;
+    
+    void loadCACert();
+    void connect(String);
     
 public:
-    CloudClient(WiFiClient);   
+    CloudClient(AppConfig&);   
     
-    void setup();
+    void setup(String);
     static SetAcCommandCallback setAcCommandCallbackr;
     
     void onSetAcCommand(SetAcCommandCallback callback);

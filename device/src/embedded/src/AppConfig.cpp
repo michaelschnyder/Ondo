@@ -25,6 +25,8 @@ void AppConfig::load() {
     if (root.success()) {
         strcpy(AppConfig::wifiSSID, root["wifiSSID"]);
         strcpy(AppConfig::wifiKey, root["wifiKey"]);
+        strcpy(AppConfig::azIoTHubName, root["azIoTHubName"]);
+        strcpy(AppConfig::azIoTSASToken, root["azIoTSASToken"]);
         Serial.println("Configuration loaded.");
 
     } else {
@@ -41,4 +43,12 @@ String AppConfig::getWifiSSID() {
 
 String AppConfig::getWifiKey() {
     return AppConfig::wifiKey;
+}
+
+String AppConfig::getAzIoTHubName() {
+    return AppConfig::azIoTHubName;
+}
+
+String AppConfig::getAzIoTSASToken() {
+    return AppConfig::azIoTSASToken;
 }
