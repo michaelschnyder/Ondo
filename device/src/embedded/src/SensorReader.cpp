@@ -19,7 +19,7 @@ void SensorReader::loop() {
         printLastReadingOnConsole();
 
         if (updateCallback != NULL) {
-            updateCallback(tempC, tempF, humidity, heatIndexC, heatIndexF);
+            updateCallback(humidity, tempC, tempF, heatIndexC, heatIndexF);
         }
 
     }
