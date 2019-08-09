@@ -97,10 +97,10 @@ void CloudClient::loop() {
 }
 
 void CloudClient::send(JsonObject& data) {
-  // TODO: Use Pubsub to send
-  // CloudClient::device.sendState(data);
+  char buffer[512];
+  data.printTo(buffer);
 
-  //IoTHubClient_LL_SendEventAsync
+  CloudClient::client.publish("devices/Ondo-3c71bf3168b1/messages/events/", buffer);
 }
 
 void CloudClient::onSetAcCommand(SetAcCommandCallback callback) {
