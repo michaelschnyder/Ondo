@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
-#include "PubSubClient.h"
+#include "libs/PubSubClient/PubSubClient.h"
 
 #include "AppConfig.h"
 
