@@ -26,7 +26,9 @@ void Application::loop() {
 }
 
 void Application::setupAndConnectWifi() { 
-  WiFi.mode(WIFI_STA);
+  WiFi.mode(WIFI_STA);    // Station Mode, i.e. connect to a WIFI and don't serve as AP
+  WiFi.persistent(false); // Do not store WIFI information in EEPROM.
+
   logger.trace("Connecting to WLAN with SSID '%s'. This may take some time...", config.getWifiSSID().c_str());
 
   WiFi.begin(config.getWifiSSID(), config.getWifiKey());
