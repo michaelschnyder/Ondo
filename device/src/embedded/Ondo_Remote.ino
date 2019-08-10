@@ -9,9 +9,6 @@ void setup() {
 
   // Wait for serial to initialize.
   while(!Serial) { }
-
-  Serial.println("\nDevice Started");
-  Serial.println("-------------------------------------");
   
   app.boostrap();
 }

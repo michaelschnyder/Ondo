@@ -4,33 +4,19 @@ Application::Application(): dakinir(IRPIN), sensorReader(DHTPIN, DHTTYPE), cloud
 }
 
 void Application::boostrap() {
-    byte mac[6]; 
-    WiFi.macAddress(mac);
+    
+  setGeneratedDeviceId();
+  startupBanner();
+  initializeFileSystem();
 
-    char deviceName[10];
-    sprintf(deviceName, "Ondo-%2x%2x%2x%2x%2x%2x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-    Serial.print("Device Id: ");
-    Serial.println(deviceName);
-    Serial.println("-------------------------------------\n");
+  wireEventHandlers();
 
+  config.load();
 
-    if (!SPIFFS.begin()) {
-        SPIFFS.format();
-        Serial.println("ERROR: Unable to start filesystem.");
-    }
-    else {
-        Serial.println("INFO: Filesystem ready. Loading configuration...");
-        config.load();
-    }
-
-    cloudClient.onSetAcCommand([this](bool a, int16_t b, int16_t c, bool d, bool e) { handleSetAcCommand(a, b, c, d, e); });
-    sensorReader.onUpdate([this](float a, float b, float c, float d, float e) { handleSensorUpdate(a, b, c, d, e); });
-
-    sensorReader.setup();
-
-    setupAndConnectWifi();
-
-    cloudClient.setup(deviceName);
+  setupAndConnectWifi();
+  
+  sensorReader.setup();
+  cloudClient.setup(deviceId);
 }
 
 void Application::loop() {
@@ -53,6 +39,37 @@ void Application::setupAndConnectWifi() {
 
   Serial.print("Connected, IP address: ");
   Serial.println(WiFi.localIP());
+}
+
+void Application::setGeneratedDeviceId() {
+  byte mac[6]; 
+  WiFi.macAddress(mac);
+
+  sprintf(deviceId, "Ondo-%2x%2x%2x%2x%2x%2x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+}
+
+void Application::startupBanner() {
+  Serial.println("\nDevice Started");
+  Serial.println("-------------------------------------");
+  
+  Serial.print("Device Id: ");
+  Serial.println(deviceId);
+  Serial.println("-------------------------------------\n");
+}
+
+void Application::initializeFileSystem() {
+  if (!SPIFFS.begin()) {
+      SPIFFS.format();
+      Serial.println("ERROR: Unable to start filesystem.");
+  }
+  else {
+      Serial.println("INFO: Filesystem ready. Loading configuration...");    
+  }
+}
+
+void Application::wireEventHandlers() {
+  cloudClient.onSetAcCommand([this](bool a, int16_t b, int16_t c, bool d, bool e) { handleSetAcCommand(a, b, c, d, e); });
+  sensorReader.onUpdate([this](float a, float b, float c, float d, float e) { handleSensorUpdate(a, b, c, d, e); });
 }
 
 void Application::handleSensorUpdate(float humidity, float tempC, float tempF, float heatIndexC, float heatIndexF) {

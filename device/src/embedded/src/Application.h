@@ -31,7 +31,12 @@ private:
     SensorReader sensorReader;
     CloudClient cloudClient;
 
+    char deviceId[10];
     void setupAndConnectWifi();
+    void wireEventHandlers();
+    void setGeneratedDeviceId();
+    void startupBanner();
+    void initializeFileSystem();
 
     void handleSensorUpdate(float humidity, float tempC, float tempF, float heatIndexC, float heatIndexF);
     void handleSetAcCommand(bool status, int16_t fanLevel, int16_t tempC, bool quiet, bool powerful);
