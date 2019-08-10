@@ -16,8 +16,8 @@ private:
     // Name max lenght: 50 (according to azure)
     char azIoTHubName[51];
 
-    // Unknown max lenght, taking 128
-    char azIoTSASToken[129]; 
+    // Unknown max lenght, taking 257
+    char azIoTSASToken[257]; 
 
     log4Esp::Logger logger = log4Esp::Logger("AppConfig");
 public:
