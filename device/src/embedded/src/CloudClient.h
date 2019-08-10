@@ -8,7 +8,7 @@
 
 #include "AppConfig.h"
 
-typedef void (*SetAcCommandCallback)(bool, int16_t, int16_t, bool, bool);
+#define SETACCOMMAND_CALLBACK_SIGNATURE std::function<void(bool, int16_t, int16_t, bool, bool)> onSetAcCommandCallback
 
 class CloudClient {
 private:
@@ -16,6 +16,7 @@ private:
     AppConfig& config;
     PubSubClient client;
     
+    SETACCOMMAND_CALLBACK_SIGNATURE;
     void loadCACert();
     void connect(String);
     
@@ -24,9 +25,8 @@ public:
     CloudClient(AppConfig&);   
     
     void setup(String);
-    static SetAcCommandCallback setAcCommandCallbackr;
     
-    void onSetAcCommand(SetAcCommandCallback callback);
+    void onSetAcCommand(SETACCOMMAND_CALLBACK_SIGNATURE);
 	void loop();
     void send(JsonObject& data);
 };

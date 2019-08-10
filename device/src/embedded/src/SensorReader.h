@@ -1,9 +1,13 @@
-#include <DHT.h>
 
 #ifndef SensorReader_h
 #define SensorReader_h
 
-typedef void (*MeasurementCallback)(float, float, float, float, float);
+#include <DHT.h>
+#include <functional>
+
+#define MEASUREMENT_CALLBACK_SIGNATURE std::function<void(float, float, float, float, float)> updateCallback
+
+//typedef void (*MeasurementCallback)(float, float, float, float, float);
 
 class SensorReader {
  
@@ -14,7 +18,7 @@ class SensorReader {
         // update interval:
         const long interval = 2000; 
 
-        MeasurementCallback updateCallback = NULL;
+        MEASUREMENT_CALLBACK_SIGNATURE;
 
         void updateReadings();
         void printLastReadingOnConsole();
@@ -30,7 +34,7 @@ class SensorReader {
 
         void setup();
         void loop();
-        void onUpdate(MeasurementCallback callback);
+        void onUpdate(MEASUREMENT_CALLBACK_SIGNATURE);
 };
 
 #endif

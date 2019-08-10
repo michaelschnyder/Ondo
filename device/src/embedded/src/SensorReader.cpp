@@ -25,8 +25,8 @@ void SensorReader::loop() {
     }
 }
 
-void SensorReader::onUpdate(MeasurementCallback callback) {
-    SensorReader::updateCallback = callback;
+void SensorReader::onUpdate(MEASUREMENT_CALLBACK_SIGNATURE) {
+    this->updateCallback = updateCallback;
 }
 
 void SensorReader::updateReadings() {

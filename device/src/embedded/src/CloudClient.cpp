@@ -27,7 +27,7 @@ void CloudClient::loadCACert() {
   delay(1000);
 
   // Set server CA file
-  if(wifiClient.loadCACert(ca)) {
+  if(wifiClient.loadCACert(ca, ca.size())) {
     Serial.println("CA loaded to wifiClientSecure");
   }
   else {
@@ -35,7 +35,7 @@ void CloudClient::loadCACert() {
   }
 
   File ca2 = SPIFFS.open("/BaltimoreCyberTrustRoot.der", "r"); 
-  if(wifiClient.loadCertificate(ca2)) {
+  if(wifiClient.loadCertificate(ca2, ca.size())) {
     Serial.println("cert loaded");
   }
   else {
@@ -119,8 +119,8 @@ void CloudClient::send(JsonObject& data) {
   CloudClient::client.publish("devices/Ondo-3c71bf3168b1/messages/events/", buffer);
 }
 
-void CloudClient::onSetAcCommand(SetAcCommandCallback callback) {
-    //CloudClient::setAcCommandCallback = callback;
+void CloudClient::onSetAcCommand(SETACCOMMAND_CALLBACK_SIGNATURE) {
+    this->onSetAcCommandCallback = onSetAcCommandCallback;
 }
 
 /*/
