@@ -1,4 +1,14 @@
 #include "CloudClient.h"
+String mqtt_server;
+int port = 8883;
+String mqtt_user;
+String inbound_topic; 
+String outbound_topic;
+String deviceId;
+
+boolean clientReady = false;
+long lastReconnectAttempt = 0;
+int retryTimoutInMs = 5000;
 
 CloudClient::CloudClient(AppConfig& appConfig) : config(appConfig) { 
   CloudClient::wifiClient.setInsecure();
@@ -11,8 +21,30 @@ CloudClient::CloudClient(AppConfig& appConfig) : config(appConfig) {
 }
 
 
-void CloudClient::setup(String deviceId) {
-  this->connect(deviceId);
+void CloudClient::setup(String devId) {
+  const char* domain = "azure-devices.net";
+  deviceId = devId;
+  mqtt_server = CloudClient::config.getAzIoTHubName() + '.' + domain;
+  
+  mqtt_user = mqtt_server + "/" + deviceId;
+  inbound_topic = "devices/" + deviceId + "/messages/devicebound/#";
+  outbound_topic = "devices/" + deviceId + "/messages/events/";
+  int maxAttempts = 5;
+
+  for(int i = 0; i < maxAttempts; i++) {
+    if(this->connect()) {
+      clientReady = true;
+      return;
+    }
+
+    if (i+1 < maxAttempts) {
+      logger.warning("Unable to connect to MQTT Server in attempt %d/%d. Retry in %ds...", i+1, maxAttempts, retryTimoutInMs/1000);
+      delay(retryTimoutInMs);
+    }
+  }
+
+  logger.error("Initial connection to MQTT not successful. Will continue trying...");
+  lastReconnectAttempt = millis();
 }
 
 void CloudClient::loadCACert() {
@@ -52,58 +84,85 @@ void CloudClient::callback(char* topic, byte* payload, unsigned int length) {
   logger.verbose("MQQT Message: '%s'", message.c_str());
 }
 
-void CloudClient::connect(String deviceId) {
-  int port = 8883;
+boolean CloudClient::connect() {
 
-  const char* domain = "azure-devices.net";
+  logger.trace("Attempting to connect to MQTT server...");
+  logger.verbose("URL: %s:%d, MQTT_MAX_PACKET_SIZE: %d", mqtt_server.c_str(), port, MQTT_MAX_PACKET_SIZE);  
 
-  String mqtt_server = CloudClient::config.getAzIoTHubName() + '.' + domain;
-  String mqtt_user = mqtt_server + "/" + deviceId;
-  String inbound_topic = "devices/" + deviceId + "/messages/devicebound/#";
-  String outbound_topic = "devices/" + deviceId + "/messages/events/";
+  CloudClient::client.setServer(mqtt_server.c_str(), port);
 
-  for(int i = 0; i < 5; i++) {
+  logger.verbose("Credentials: DeviceId: %s, User: %s, Pass: %s", deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str());
 
-    logger.trace("Attempting to connect to MQTT server...");
-    logger.verbose("URL: %s:%d, MQTT_MAX_PACKET_SIZE: %d", mqtt_server.c_str(), port, MQTT_MAX_PACKET_SIZE);  
-
-    CloudClient::client.setServer(mqtt_server.c_str(), port);
-
-    logger.verbose("Credentials: DeviceId: %s, User: %s, Pass: %s", deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str());
-
-    if (client.connect(deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str())) {
-      logger.trace("Connection established to '%s:%d'. Subscibing for inbound topic '%s'", mqtt_server.c_str(), port, inbound_topic.c_str());      
-      
-      if(client.subscribe(inbound_topic.c_str())) {
-        logger.verbose("Subscribe to topic successful");
-      }
-      else {
-        logger.fatal("Subscribe to topic failed");
-      }
-
-      logger.verbose("Sending welcome message to '%s'", outbound_topic.c_str());  
-      if (CloudClient::client.publish(outbound_topic.c_str(), "hello world")) {
-        logger.verbose("Welome message send successful");
-      }
-      else {
-        logger.fatal("Unable to send welcome message!");
-      }
-      
-      return;
+  if (client.connect(deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str())) {
+    logger.trace("Connection established to '%s:%d'. Subscribing for inbound topic '%s'", mqtt_server.c_str(), port, inbound_topic.c_str());      
+    
+    if(client.subscribe(inbound_topic.c_str())) {
+      logger.verbose("Subscribe to topic successful");
     }
     else {
-      char lastErrorText[64];
-      int errorNo = CloudClient::wifiClient.getLastSSLError(lastErrorText, 64);
-      
-      logger.fatal("Connection to MQTT failed!. Client-State: %d, lastSSLError: %d ('%s'). Next try in 5s", client.state(), errorNo, lastErrorText);      
-
-      delay(5000);
+      logger.fatal("Subscribe to topic failed");
+      return false;
     }
+
+    logger.verbose("Sending welcome message to '%s'", outbound_topic.c_str());  
+    if (CloudClient::client.publish(outbound_topic.c_str(), "hello world")) {
+      logger.verbose("Welome message send successful");
+    }
+    else {
+      logger.fatal("Unable to send welcome message!");
+      return false;
+    }
+    
+    return true;
+  }
+  else {
+    char lastErrorText[64];
+    int errorNo = CloudClient::wifiClient.getLastSSLError(lastErrorText, 64);
+    
+    logger.fatal("Connection to MQTT failed!. Client-State: %d, lastSSLError: %d ('%s'). Next try in 5s", client.state(), errorNo, lastErrorText);  
+
+    return false;    
   }
 }
 
 void CloudClient::loop() {
   CloudClient::client.loop();
+
+  reconnectIfNecessary();
+}
+
+void CloudClient::reconnectIfNecessary() {
+
+
+  if (clientReady && client.connected()) {
+    return;
+  }
+
+  unsigned long currentMillis = millis();
+  if (!(currentMillis - lastReconnectAttempt >= retryTimoutInMs * 2)) {
+    return;
+  }
+
+  // Start a new connection attempt
+
+  if(clientReady && !client.connected()) {
+    // The initial state was valid, means the connection did reset
+    clientReady = false;
+    logger.warning("MQTT client got disconnected. Trying to reconnect.");
+  }
+
+  logger.verbose("Starting new reconnect attempt.");
+   
+  if(this->connect()) {
+    clientReady = true;
+    lastReconnectAttempt = 0;
+    logger.trace("Successfully re-established connection MQTT Server");
+    return;
+  }
+
+  logger.error("Re-establishing connection and initializing client failed.");
+
+  lastReconnectAttempt = millis();
 }
 
 void CloudClient::send(JsonObject& data) {
@@ -116,36 +175,6 @@ void CloudClient::send(JsonObject& data) {
 void CloudClient::onSetAcCommand(SETACCOMMAND_CALLBACK_SIGNATURE) {
     this->onSetAcCommandCallback = onSetAcCommandCallback;
 }
-
-/*/
-void CloudClient::connectToLosant() {
-
-  // Connect to Losant.
-  Serial.println();
-  Serial.print("Connecting to Losant...");
-
-  // device.connect(wifiClient, LOSANT_ACCESS_KEY, LOSANT_ACCESS_SECRET);
-
-  int attemptToConnect = 1;
-
-  while(!device.connected() && attemptToConnect <= 5) {
-    delay(500);
-    Serial.print(".");
-    attemptToConnect++;
-  } 
-
-  if (device.connected()) {
-    Serial.println("Connected!");
-    Serial.println();
-    Serial.println("This device is now ready for use!");
-  }
-  else {
-    Serial.println("ERR: Device is not connected to cloud backend");
-  }
-
-
-}
-*/
 
 /*
 void handleCommand(LosantCommand *command) {

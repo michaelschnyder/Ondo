@@ -20,9 +20,10 @@ private:
     
     SETACCOMMAND_CALLBACK_SIGNATURE;
     void loadCACert();
-    void connect(String);
+    boolean connect();
     
     log4Esp::Logger logger = log4Esp::Logger("CloudClient");
+    void reconnectIfNecessary();
 public:
     void callback(char*, uint8_t*, unsigned int);
     CloudClient(AppConfig&);   
