@@ -19,7 +19,8 @@
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64",
             "defines": [
-                "ARDUINO=1000"
+                "ARDUINO=1000",
+                "ESP8266"
             ]
         }
     ],

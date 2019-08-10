@@ -3,7 +3,12 @@
 CloudClient::CloudClient(AppConfig& appConfig) : config(appConfig) { 
   CloudClient::wifiClient.setInsecure();
   CloudClient::client.setClient(CloudClient::wifiClient);
+
+  // Required to make signature of member function (that comes with a implict *this) match
+  // with expected signature. See: https://stackoverflow.com/a/46489820
+  client.setCallback([this](char* a, uint8_t* b, unsigned int c) { this->callback(a, b, c); });
 }
+
 
 void CloudClient::setup(String deviceId) {
   this->connect(deviceId);
@@ -41,6 +46,14 @@ void CloudClient::loadCACert() {
   wifiClient.allowSelfSignedCerts();
 }
 
+void CloudClient::callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("C2D: ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+}
+
 void CloudClient::connect(String deviceId) {
   int port = 8883;
 
@@ -67,6 +80,9 @@ void CloudClient::connect(String deviceId) {
     if (client.connect(deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str())) {
       Serial.print("Connection established to ");
       Serial.println(mqtt_server);
+      
+      client.subscribe(("devices/" + deviceId + "/messages/devicebound/#").c_str());
+
       CloudClient::client.publish(("devices/" + deviceId + "/messages/events/").c_str(), "hello world");
       Serial.println("Welcome message sent.");
       break;

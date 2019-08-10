@@ -20,6 +20,7 @@ private:
     void connect(String);
     
 public:
+    void callback(char*, uint8_t*, unsigned int);
     CloudClient(AppConfig&);   
     
     void setup(String);
