@@ -35,7 +35,8 @@ private:
     log4Esp::Logger logger = log4Esp::Logger("Application");
 
     char deviceId[10];
-    void setupAndConnectWifi();
+    void setupWifi();
+    boolean connectToWifi();
     void wireEventHandlers();
     void setGeneratedDeviceId();
     void startupBanner();

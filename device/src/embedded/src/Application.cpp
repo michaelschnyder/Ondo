@@ -1,5 +1,8 @@
 #include "Application.h"
 
+
+int wifiConnectionTimeoutInMs = 10000;
+
 Application::Application(): dakinir(IRPIN), sensorReader(DHTPIN, DHTTYPE), cloudClient(Application::config) {
   
 }
@@ -14,7 +17,13 @@ void Application::boostrap() {
 
   config.load();
 
-  setupAndConnectWifi();
+  setupWifi();
+  
+  if (!connectToWifi()) {
+    logger.fatal("Cant connect to WIFI. Restarting ESP in 2s");
+    delay(2000);
+    ESP.reset();
+  }
   
   sensorReader.setup();
   cloudClient.setup(deviceId);
@@ -23,22 +32,49 @@ void Application::boostrap() {
 void Application::loop() {
   cloudClient.loop();
   sensorReader.loop();
+
+  if(WiFi.status() != WL_CONNECTED) {
+
+    for(int i = 0; i < 12; i++) {
+      if (connectToWifi()) {
+        return;
+      }
+    }
+
+    logger.fatal("Wifi connection failed and unable to reconnect after %d trials during %ds. Resetting.", 12, 12 * wifiConnectionTimeoutInMs);
+    ESP.reset();
+  }
 }
 
-void Application::setupAndConnectWifi() { 
+void Application::setupWifi() {
   WiFi.mode(WIFI_STA);    // Station Mode, i.e. connect to a WIFI and don't serve as AP
   WiFi.persistent(false); // Do not store WIFI information in EEPROM.
+}
+
+bool Application::connectToWifi() { 
 
   logger.trace("Connecting to WLAN with SSID '%s'. This may take some time...", config.getWifiSSID().c_str());
 
   WiFi.begin(config.getWifiSSID(), config.getWifiKey());
+  
+  long lastAttemptt = millis();
+  bool isTimeout = false;
 
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED && !isTimeout)
   {
-    delay(100);
+    delay(50);
+    
+    unsigned long currentMillis = millis();
+    isTimeout = (currentMillis - lastAttemptt) >= wifiConnectionTimeoutInMs;
+  }
+
+  if(isTimeout) {
+    logger.error("Could not connect to Wifi with SSID '%s' after %ds", config.getWifiSSID().c_str(), wifiConnectionTimeoutInMs / 1000);
+    return false;
   }
 
   logger.trace("Connected, IP address: %s", WiFi.localIP().toString().c_str());
+  return true;
 }
 
 void Application::setGeneratedDeviceId() {
