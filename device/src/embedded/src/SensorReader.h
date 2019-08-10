@@ -4,6 +4,7 @@
 
 #include <DHT.h>
 #include <functional>
+#include <Log4Esp.h>
 
 #define MEASUREMENT_CALLBACK_SIGNATURE std::function<void(float, float, float, float, float)> updateCallback
 
@@ -23,6 +24,7 @@ class SensorReader {
         void updateReadings();
         void printLastReadingOnConsole();
 
+        log4Esp::Logger logger = log4Esp::Logger("SensorReader");
     public:
         SensorReader(int gpio, int type);
 

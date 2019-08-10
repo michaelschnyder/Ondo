@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <FS.h>
 #include <ArduinoJson.h>
+#include <Log4Esp.h>
 
 class AppConfig {
 private:
@@ -18,6 +19,7 @@ private:
     // Unknown max lenght, taking 128
     char azIoTSASToken[129]; 
 
+    log4Esp::Logger logger = log4Esp::Logger("AppConfig");
 public:
     AppConfig();   
     void load();

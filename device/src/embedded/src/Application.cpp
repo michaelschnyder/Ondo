@@ -1,10 +1,11 @@
 #include "Application.h"
 
 Application::Application(): dakinir(IRPIN), sensorReader(DHTPIN, DHTTYPE), cloudClient(Application::config) {
+  
 }
 
 void Application::boostrap() {
-    
+  
   setGeneratedDeviceId();
   startupBanner();
   initializeFileSystem();
@@ -26,19 +27,16 @@ void Application::loop() {
 
 void Application::setupAndConnectWifi() { 
   WiFi.mode(WIFI_STA);
-  Serial.print("Connecting to '" + config.getWifiSSID() + "'");
+  logger.trace("Connecting to WLAN with SSID '%s'. This may take some time...", config.getWifiSSID().c_str());
 
   WiFi.begin(config.getWifiSSID(), config.getWifiKey());
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(500);
-    Serial.print(".");
+    delay(100);
   }
-  Serial.println();
 
-  Serial.print("Connected, IP address: ");
-  Serial.println(WiFi.localIP());
+  logger.trace("Connected, IP address: %s", WiFi.localIP().toString().c_str());
 }
 
 void Application::setGeneratedDeviceId() {
@@ -49,21 +47,25 @@ void Application::setGeneratedDeviceId() {
 }
 
 void Application::startupBanner() {
-  Serial.println("\nDevice Started");
-  Serial.println("-------------------------------------");
-  
-  Serial.print("Device Id: ");
-  Serial.println(deviceId);
-  Serial.println("-------------------------------------\n");
+  logger.trace("\nDevice Started");
+  logger.trace("-------------------------------------");
+  logger.trace("Device Id: %s", deviceId);
+  logger.trace("-------------------------------------\n");
 }
 
 void Application::initializeFileSystem() {
   if (!SPIFFS.begin()) {
-      SPIFFS.format();
-      Serial.println("ERROR: Unable to start filesystem.");
+      logger.error("Unable to start filesystem. Formatting now as remediation action...");
+      if (!SPIFFS.format()) {
+        logger.error("Formatting failed. Unable to recover.");
+      }
+      else {
+        logger.trace("Fomatting succeded. Restarting now.");
+        ESP.reset();
+      }
   }
   else {
-      Serial.println("INFO: Filesystem ready. Loading configuration...");    
+      logger.trace("Filesystem ready. Loading configuration...");    
   }
 }
 

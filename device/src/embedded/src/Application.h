@@ -8,6 +8,7 @@
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 #include <ir_Daikin.h>
+#include <Log4Esp.h>
 
 #include "CloudClient.h"
 #include "SensorReader.h"
@@ -30,6 +31,8 @@ private:
 
     SensorReader sensorReader;
     CloudClient cloudClient;
+
+    log4Esp::Logger logger = log4Esp::Logger("Application");
 
     char deviceId[10];
     void setupAndConnectWifi();

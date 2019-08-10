@@ -4,9 +4,12 @@ AppConfig::AppConfig() {
 }
 
 void AppConfig::load() {
+
+    logger.verbose("Attempting to load configuration from '%s'", AppConfig::filename.c_str());
+
     if (!SPIFFS.exists(AppConfig::filename)) {
         
-        Serial.println("Cannot find configuration at '" + AppConfig::filename + "'");
+        logger.warning("Configuration file '%s' does not exist.", AppConfig::filename.c_str());
         return;
     }
 
@@ -14,27 +17,26 @@ void AppConfig::load() {
     jsonFile = SPIFFS.open(AppConfig::filename, "r");
 
     if (!jsonFile) {
-        Serial.println("Cannot open configuration file '" + AppConfig::filename + "'");
+        logger.error("Cannot open configuration file '%s'", AppConfig::filename.c_str());
         return;
     }
 
     // Allocate a buffer to store contents of the file.
     StaticJsonBuffer<512> jsonBuffer;
     JsonObject &root = jsonBuffer.parseObject(jsonFile);
-
-    if (root.success()) {
-        strcpy(AppConfig::wifiSSID, root["wifiSSID"]);
-        strcpy(AppConfig::wifiKey, root["wifiKey"]);
-        strcpy(AppConfig::azIoTHubName, root["azIoTHubName"]);
-        strcpy(AppConfig::azIoTSASToken, root["azIoTSASToken"]);
-        Serial.println("Configuration loaded.");
-
-    } else {
-        Serial.println("failed to load json config");
-    }
-
     jsonFile.close();
 
+    if (!root.success()) {
+        logger.error("failed to load application configuration.");
+        return;
+    }
+
+    strcpy(AppConfig::wifiSSID, root["wifiSSID"]);
+    strcpy(AppConfig::wifiKey, root["wifiKey"]);
+    strcpy(AppConfig::azIoTHubName, root["azIoTHubName"]);
+    strcpy(AppConfig::azIoTSASToken, root["azIoTSASToken"]);
+
+    logger.trace("Application configuration loaded.");
 }
 
 String AppConfig::getWifiSSID() {

@@ -13,6 +13,7 @@
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\DHT_sensor_library",
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\PageBuilder\\src",
                 "${HOMEPATH}\\Documents\\Arduino\\libraries\\AutoConnect\\src",
+                "${HOMEPATH}\\Documents\\Arduino\\libraries\\log4Esp\\src",
                 "C:\\Users\\mis\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.5.2\\**",
                 "C:\\Users\\mis\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**"
             ],

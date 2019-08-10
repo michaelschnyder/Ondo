@@ -2,6 +2,7 @@
 
 CloudClient::CloudClient(AppConfig& appConfig) : config(appConfig) { 
   CloudClient::wifiClient.setInsecure();
+  
   CloudClient::client.setClient(CloudClient::wifiClient);
 
   // Required to make signature of member function (that comes with a implict *this) match
@@ -19,27 +20,27 @@ void CloudClient::loadCACert() {
   // Load CA file from SPIFFS
   File ca = SPIFFS.open("/BaltimoreCyberTrustRoot.der", "r"); 
   if (!ca) {
-    Serial.println("Failed to open ca ");
+    logger.verbose("Failed to open ca ");
   }
   else
-    Serial.println("Success to open ca");
+    logger.verbose("Success to open ca");
 
   delay(1000);
 
   // Set server CA file
   if(wifiClient.loadCACert(ca, ca.size())) {
-    Serial.println("CA loaded to wifiClientSecure");
+    logger.verbose("CA loaded to wifiClientSecure");
   }
   else {
-    Serial.println("CA loading failed");
+    logger.verbose("CA loading failed");
   }
 
   File ca2 = SPIFFS.open("/BaltimoreCyberTrustRoot.der", "r"); 
   if(wifiClient.loadCertificate(ca2, ca.size())) {
-    Serial.println("cert loaded");
+    logger.verbose("cert loaded");
   }
   else {
-    Serial.println("cert failed");
+    logger.verbose("cert failed");
   }
 
   wifiClient.setInsecure();
@@ -47,11 +48,8 @@ void CloudClient::loadCACert() {
 }
 
 void CloudClient::callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("C2D: ");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
+  String message = String((char*)payload);
+  logger.verbose("MQQT Message: '%s'", message.c_str());
 }
 
 void CloudClient::connect(String deviceId) {
@@ -61,50 +59,46 @@ void CloudClient::connect(String deviceId) {
 
   String mqtt_server = CloudClient::config.getAzIoTHubName() + '.' + domain;
   String mqtt_user = mqtt_server + "/" + deviceId;
+  String inbound_topic = "devices/" + deviceId + "/messages/devicebound/#";
+  String outbound_topic = "devices/" + deviceId + "/messages/events/";
 
   for(int i = 0; i < 5; i++) {
 
-    Serial.print("Attempting to connect to MQTT server. ");
-    Serial.print("URL: " + mqtt_server + ":" + port + ", ");  
-    Serial.print("MQTT_MAX_PACKET_SIZE: ");
-    Serial.println(MQTT_MAX_PACKET_SIZE);
+    logger.trace("Attempting to connect to MQTT server...");
+    logger.verbose("URL: %s:%d, MQTT_MAX_PACKET_SIZE: %d", mqtt_server.c_str(), port, MQTT_MAX_PACKET_SIZE);  
 
     CloudClient::client.setServer(mqtt_server.c_str(), port);
 
-    Serial.print("Using credentials. ");
-    Serial.print("DeviceId: " + deviceId);
-    Serial.print(", User: ");
-    Serial.print(mqtt_user);
-    Serial.println(", Pass: " + CloudClient::config.getAzIoTSASToken());
+    logger.verbose("Credentials: DeviceId: %s, User: %s, Pass: %s", deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str());
 
     if (client.connect(deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str())) {
-      Serial.print("Connection established to ");
-      Serial.println(mqtt_server);
+      logger.trace("Connection established to '%s:%d'. Subscibing for inbound topic '%s'", mqtt_server.c_str(), port, inbound_topic.c_str());      
       
-      client.subscribe(("devices/" + deviceId + "/messages/devicebound/#").c_str());
+      if(client.subscribe(inbound_topic.c_str())) {
+        logger.verbose("Subscribe to topic successful");
+      }
+      else {
+        logger.fatal("Subscribe to topic failed");
+      }
 
-      CloudClient::client.publish(("devices/" + deviceId + "/messages/events/").c_str(), "hello world");
-      Serial.println("Welcome message sent.");
-      break;
+      logger.verbose("Sending welcome message to '%s'", outbound_topic.c_str());  
+      if (CloudClient::client.publish(outbound_topic.c_str(), "hello world")) {
+        logger.verbose("Welome message send successful");
+      }
+      else {
+        logger.fatal("Unable to send welcome message!");
+      }
+      
+      return;
     }
     else {
-      Serial.print("ERROR: Connection to MQTT failed!");
-      Serial.print("RC-State=");
-      Serial.print(client.state());
       char lastErrorText[64];
       int errorNo = CloudClient::wifiClient.getLastSSLError(lastErrorText, 64);
-      Serial.print(", LastSSLError=");
-      Serial.print(errorNo);
-      Serial.print(", '");
-      Serial.print(lastErrorText);
-      Serial.println("'");
       
-      
-      Serial.println("try again in 5 seconds....");
-      // Wait 5 seconds before retrying
+      logger.fatal("Connection to MQTT failed!. Client-State: %d, lastSSLError: %d ('%s'). Next try in 5s", client.state(), errorNo, lastErrorText);      
+
       delay(5000);
     }
-    
   }
 }
 

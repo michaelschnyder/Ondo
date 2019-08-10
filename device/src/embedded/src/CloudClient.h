@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
+#include <Log4Esp.h>
+
 #include "libs/PubSubClient/PubSubClient.h"
 
 #include "AppConfig.h"
@@ -20,6 +22,7 @@ private:
     void loadCACert();
     void connect(String);
     
+    log4Esp::Logger logger = log4Esp::Logger("CloudClient");
 public:
     void callback(char*, uint8_t*, unsigned int);
     CloudClient(AppConfig&);   

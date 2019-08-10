@@ -40,7 +40,7 @@ void SensorReader::updateReadings() {
 
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t) || isnan(f)) {
-        Serial.println("Failed to read from DHT sensor!");
+        logger.warning("Failed to read from DHT sensor!");
         return;
     }
 
@@ -56,18 +56,5 @@ void SensorReader::updateReadings() {
 }
 
 void SensorReader::printLastReadingOnConsole() {
-    
-    Serial.print("Humidity: ");
-    Serial.print(humidity);
-    Serial.print(" %\t");
-    Serial.print("Temperature: ");
-    Serial.print(tempC);
-    Serial.print(" *C ");
-    Serial.print(tempF);
-    Serial.print(" *F\t");
-    Serial.print("Heat index: ");
-    Serial.print(heatIndexC);
-    Serial.print(" *C ");
-    Serial.print(heatIndexF);
-    Serial.println(" *F");
+    logger.verbose("New Measurement. Humidity: %4.2f, Temperature:  %4.2f°C (%4.2f°F), Heat index: %4.2f°C (%4.2f°F)", humidity, tempC, tempF, heatIndexC, heatIndexF);
 }
