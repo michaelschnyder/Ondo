@@ -1,4 +1,5 @@
 #include "CloudClient.h"
+
 String mqtt_server;
 int port = 8883;
 String mqtt_user;
@@ -11,8 +12,8 @@ long lastReconnectAttempt = 0;
 int retryTimoutInMs = 5000;
 
 CloudClient::CloudClient(AppConfig& appConfig) : config(appConfig) { 
-  CloudClient::wifiClient.setInsecure();
   
+  CloudClient::wifiClient.setInsecure();
   CloudClient::client.setClient(CloudClient::wifiClient);
 
   // Required to make signature of member function (that comes with a implict *this) match
@@ -20,8 +21,8 @@ CloudClient::CloudClient(AppConfig& appConfig) : config(appConfig) {
   client.setCallback([this](char* a, uint8_t* b, unsigned int c) { this->callback(a, b, c); });
 }
 
-
 void CloudClient::setup(String devId) {
+  
   const char* domain = "azure-devices.net";
   deviceId = devId;
   mqtt_server = CloudClient::config.getAzIoTHubName() + '.' + domain;
@@ -93,29 +94,7 @@ boolean CloudClient::connect() {
 
   logger.verbose("Credentials: DeviceId: %s, User: %s, Pass: %s", deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str());
 
-  if (client.connect(deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str())) {
-    logger.trace("Connection established to '%s:%d'. Subscribing for inbound topic '%s'", mqtt_server.c_str(), port, inbound_topic.c_str());      
-    
-    if(client.subscribe(inbound_topic.c_str())) {
-      logger.verbose("Subscribe to topic successful");
-    }
-    else {
-      logger.fatal("Subscribe to topic failed");
-      return false;
-    }
-
-    logger.verbose("Sending welcome message to '%s'", outbound_topic.c_str());  
-    if (CloudClient::client.publish(outbound_topic.c_str(), "hello world")) {
-      logger.verbose("Welome message send successful");
-    }
-    else {
-      logger.fatal("Unable to send welcome message!");
-      return false;
-    }
-    
-    return true;
-  }
-  else {
+  if (!client.connect(deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str())) {
     char lastErrorText[64];
     int errorNo = CloudClient::wifiClient.getLastSSLError(lastErrorText, 64);
     
@@ -123,6 +102,24 @@ boolean CloudClient::connect() {
 
     return false;    
   }
+
+  logger.trace("Connection established to '%s:%d'. Subscribing for inbound topic '%s'", mqtt_server.c_str(), port, inbound_topic.c_str());      
+    
+  if(!client.subscribe(inbound_topic.c_str())) {
+    logger.fatal("Subscribe to topic failed");
+    return false;
+  }
+
+  logger.verbose("Subscribe to topic successful. Sending welcome message to '%s'", outbound_topic.c_str());  
+  
+  if (!CloudClient::client.publish(outbound_topic.c_str(), "hello world")) {
+    logger.fatal("Unable to send welcome message!");
+    return false;
+  }
+
+  logger.verbose("Welome message send successful");
+  
+  return true;
 }
 
 void CloudClient::loop() {
@@ -133,7 +130,6 @@ void CloudClient::loop() {
 
 void CloudClient::reconnectIfNecessary() {
 
-
   if (clientReady && client.connected()) {
     return;
   }
@@ -143,26 +139,23 @@ void CloudClient::reconnectIfNecessary() {
     return;
   }
 
-  // Start a new connection attempt
-
   if(clientReady && !client.connected()) {
     // The initial state was valid, means the connection did reset
     clientReady = false;
     logger.warning("MQTT client got disconnected. Trying to reconnect.");
   }
 
+  // Start a new connection attempt
   logger.verbose("Starting new reconnect attempt.");
+  lastReconnectAttempt = millis();
    
   if(this->connect()) {
     clientReady = true;
-    lastReconnectAttempt = 0;
     logger.trace("Successfully re-established connection MQTT Server");
     return;
   }
 
   logger.error("Re-establishing connection and initializing client failed.");
-
-  lastReconnectAttempt = millis();
 }
 
 void CloudClient::send(JsonObject& data) {

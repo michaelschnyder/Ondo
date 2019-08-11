@@ -18,7 +18,7 @@ void Application::boostrap() {
   config.load();
 
   setupWifi();
-  
+
   if (!connectToWifi()) {
     logger.fatal("Cant connect to WIFI. Restarting ESP in 2s");
     delay(2000);
@@ -41,7 +41,7 @@ void Application::loop() {
       }
     }
 
-    logger.fatal("Wifi connection failed and unable to reconnect after %d trials during %ds. Resetting.", 12, 12 * wifiConnectionTimeoutInMs);
+    logger.fatal("Wifi connection failed and unable to reconnect after %d trials during %ds. Resetting.", 12, 12 * wifiConnectionTimeoutInMs / 1000);
     ESP.reset();
   }
 }
