@@ -122,12 +122,16 @@ void Application::handleSensorUpdate(float humidity, float tempC, float tempF, f
   
   azureIoTMqttClient.send(root);
   // Serial.println("Reported!");
+  /*
+  azureIoTMqttClient.report("humidity", humidity);
+  azureIoTMqttClient.report("tempC", tempC);
+  */
 }
 
 void Application::handleSetAcCommand(String commandName, JsonObject &root) {
     
     bool status = root["status"];
-    bool quiet = root["quite"];
+    bool quiet = root["quiet"];
     bool powerful = root["powerful"];
 
     int16_t tempC = root["temperature"];
