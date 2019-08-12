@@ -1,4 +1,4 @@
-#include "CloudClient.h"
+#include "AzureIoTMqttClient.h"
 
 String mqtt_server;
 int port = 8883;
@@ -11,21 +11,21 @@ boolean clientReady = false;
 long lastReconnectAttempt = 0;
 int retryTimoutInMs = 5000;
 
-CloudClient::CloudClient(AppConfig& appConfig) : config(appConfig) { 
+AzureIoTMqttClient::AzureIoTMqttClient(AppConfig& appConfig) : config(appConfig) { 
   
-  CloudClient::wifiClient.setInsecure();
-  CloudClient::client.setClient(CloudClient::wifiClient);
+  AzureIoTMqttClient::wifiClient.setInsecure();
+  AzureIoTMqttClient::client.setClient(AzureIoTMqttClient::wifiClient);
 
   // Required to make signature of member function (that comes with a implict *this) match
   // with expected signature. See: https://stackoverflow.com/a/46489820
   client.setCallback([this](char* a, uint8_t* b, unsigned int c) { this->callback(a, b, c); });
 }
 
-void CloudClient::setup(String devId) {
+void AzureIoTMqttClient::setup(String devId) {
   
   const char* domain = "azure-devices.net";
   deviceId = devId;
-  mqtt_server = CloudClient::config.getAzIoTHubName() + '.' + domain;
+  mqtt_server = AzureIoTMqttClient::config.getAzIoTHubName() + '.' + domain;
   
   mqtt_user = mqtt_server + "/" + deviceId;
   inbound_topic = "devices/" + deviceId + "/messages/devicebound/#";
@@ -48,7 +48,7 @@ void CloudClient::setup(String devId) {
   lastReconnectAttempt = millis();
 }
 
-void CloudClient::loadCACert() {
+void AzureIoTMqttClient::loadCACert() {
 
   // Load CA file from SPIFFS
   File ca = SPIFFS.open("/BaltimoreCyberTrustRoot.der", "r"); 
@@ -80,23 +80,51 @@ void CloudClient::loadCACert() {
   wifiClient.allowSelfSignedCerts();
 }
 
-void CloudClient::callback(char* topic, byte* payload, unsigned int length) {
-  String message = String((char*)payload);
-  logger.verbose("MQQT Message: '%s'", message.c_str());
+void AzureIoTMqttClient::callback(char* topic, byte* payload, unsigned int length) {
+  
+  char* buffer = (char*)payload;
+  buffer[length] = '\0'; // Manually add null-termination at given lenght since PubSub is reusing the buffer;
+
+  String message = String(buffer);
+  logger.verbose("Received Message from Broker. Lenght: %d, Content: '%s'", length, message.c_str());
+
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
+
+  if(!jsonMessage.success()) {
+    logger.error("Unable to parse command from broker: '%s'", message.c_str());
+    return;
+  }
+
+  if (jsonMessage.containsKey("cmd")) {
+    String commandName = jsonMessage["cmd"];
+
+    if (onCommandCallback != NULL) {
+      logger.trace("Dispatching execution of command '%s'", commandName.c_str());
+      onCommandCallback(commandName, jsonMessage);
+    }
+    else {
+      logger.trace("No callback registered for command '%s'", commandName.c_str());
+    }
+
+    return;    
+  }
+  
+  logger.warning("Recieved unvalid message: '%s'", message.c_str());
 }
 
-boolean CloudClient::connect() {
+boolean AzureIoTMqttClient::connect() {
 
   logger.trace("Attempting to connect to MQTT server...");
   logger.verbose("URL: %s:%d, MQTT_MAX_PACKET_SIZE: %d", mqtt_server.c_str(), port, MQTT_MAX_PACKET_SIZE);  
 
-  CloudClient::client.setServer(mqtt_server.c_str(), port);
+  AzureIoTMqttClient::client.setServer(mqtt_server.c_str(), port);
 
-  logger.verbose("Credentials: DeviceId: %s, User: %s, Pass: %s", deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str());
+  logger.verbose("Credentials: DeviceId: %s, User: %s, Pass: %s", deviceId.c_str(), mqtt_user.c_str(), AzureIoTMqttClient::config.getAzIoTSASToken().c_str());
 
-  if (!client.connect(deviceId.c_str(), mqtt_user.c_str(), CloudClient::config.getAzIoTSASToken().c_str())) {
+  if (!client.connect(deviceId.c_str(), mqtt_user.c_str(), AzureIoTMqttClient::config.getAzIoTSASToken().c_str())) {
     char lastErrorText[64];
-    int errorNo = CloudClient::wifiClient.getLastSSLError(lastErrorText, 64);
+    int errorNo = AzureIoTMqttClient::wifiClient.getLastSSLError(lastErrorText, 64);
     
     logger.fatal("Connection to MQTT failed!. Client-State: %d, lastSSLError: %d ('%s'). Next try in 5s", client.state(), errorNo, lastErrorText);  
 
@@ -112,7 +140,7 @@ boolean CloudClient::connect() {
 
   logger.verbose("Subscribe to topic successful. Sending welcome message to '%s'", outbound_topic.c_str());  
   
-  if (!CloudClient::client.publish(outbound_topic.c_str(), "hello world")) {
+  if (!AzureIoTMqttClient::client.publish(outbound_topic.c_str(), "hello world")) {
     logger.fatal("Unable to send welcome message!");
     return false;
   }
@@ -122,13 +150,13 @@ boolean CloudClient::connect() {
   return true;
 }
 
-void CloudClient::loop() {
-  CloudClient::client.loop();
+void AzureIoTMqttClient::loop() {
+  AzureIoTMqttClient::client.loop();
 
   reconnectIfNecessary();
 }
 
-void CloudClient::reconnectIfNecessary() {
+void AzureIoTMqttClient::reconnectIfNecessary() {
 
   if (clientReady && client.connected()) {
     return;
@@ -158,50 +186,13 @@ void CloudClient::reconnectIfNecessary() {
   logger.error("Re-establishing connection and initializing client failed.");
 }
 
-void CloudClient::send(JsonObject& data) {
+void AzureIoTMqttClient::send(JsonObject& data) {
   char buffer[512];
   data.printTo(buffer);
 
-  CloudClient::client.publish("devices/Ondo-3c71bf3168b1/messages/events/", buffer);
+  AzureIoTMqttClient::client.publish("devices/Ondo-3c71bf3168b1/messages/events/", buffer);
 }
 
-void CloudClient::onSetAcCommand(SETACCOMMAND_CALLBACK_SIGNATURE) {
-    this->onSetAcCommandCallback = onSetAcCommandCallback;
+void AzureIoTMqttClient::onCommand(SETACCOMMAND_CALLBACK_SIGNATURE) {
+    this->onCommandCallback = onCommandCallback;
 }
-
-/*
-void handleCommand(LosantCommand *command) {
-
-  Serial.println();
-  Serial.print("Command received: ");
-  Serial.println(command->name);
-
-  if (strcmp(command->name, "setAc") == 0) {
-
-    JsonObject &payload = *command->payload;
-    payload.printTo(Serial);
-    char json[400];
-
-    StaticJsonBuffer<200> jsonBuffer;
-
-    payload.printTo(json, sizeof(json));
-
-    JsonObject &root = jsonBuffer.parseObject(json);
-
-    if (!root.success()) {
-      Serial.println("parseObject() failed");
-      return;
-    }
-
-    bool statuss = root["status"];
-    bool quiet = root["quite"];
-    bool powerful = root["powerful"];
-
-    int16_t temperature = root["temperature"];
-    int16_t fan = root["fan"];
-
-    if (CloudClient::setAcCommandCallback != NULL) {
-        CloudClient::setAcCommandCallback(statuss, fan, temperature, quiet, powerful);
-    }
-  }
-}*/

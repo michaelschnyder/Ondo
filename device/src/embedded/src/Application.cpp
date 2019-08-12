@@ -3,7 +3,7 @@
 
 int wifiConnectionTimeoutInMs = 10000;
 
-Application::Application(): dakinir(IRPIN), sensorReader(DHTPIN, DHTTYPE), cloudClient(Application::config) {
+Application::Application(): dakinir(IRPIN), sensorReader(DHTPIN, DHTTYPE), azureIoTMqttClient(Application::config) {
   
 }
 
@@ -20,17 +20,17 @@ void Application::boostrap() {
   setupWifi();
 
   if (!connectToWifi()) {
-    logger.fatal("Cant connect to WIFI. Restarting ESP in 2s");
+    logger.fatal("Can't connect to WIFI. Restarting ESP in 2s");
     delay(2000);
     ESP.reset();
   }
   
   sensorReader.setup();
-  cloudClient.setup(deviceId);
+  azureIoTMqttClient.setup(deviceId);
 }
 
 void Application::loop() {
-  cloudClient.loop();
+  azureIoTMqttClient.loop();
   sensorReader.loop();
 
   if(WiFi.status() != WL_CONNECTED) {
@@ -85,7 +85,7 @@ void Application::setGeneratedDeviceId() {
 }
 
 void Application::startupBanner() {
-  logger.trace("\nDevice Started");
+  logger.trace("Device Started");
   logger.trace("-------------------------------------");
   logger.trace("Device Id: %s", deviceId);
   logger.trace("-------------------------------------\n");
@@ -108,7 +108,7 @@ void Application::initializeFileSystem() {
 }
 
 void Application::wireEventHandlers() {
-  cloudClient.onSetAcCommand([this](bool a, int16_t b, int16_t c, bool d, bool e) { handleSetAcCommand(a, b, c, d, e); });
+  azureIoTMqttClient.onCommand([this](String a, JsonObject &b) { handleSetAcCommand(a, b); });
   sensorReader.onUpdate([this](float a, float b, float c, float d, float e) { handleSensorUpdate(a, b, c, d, e); });
 }
 
@@ -120,12 +120,19 @@ void Application::handleSensorUpdate(float humidity, float tempC, float tempF, f
   root["roomTemp"] = tempC;
   // root["acPower"] = acPower;
   
-  cloudClient.send(root);
+  azureIoTMqttClient.send(root);
   // Serial.println("Reported!");
 }
 
-void Application::handleSetAcCommand(bool status, int16_t fanLevel, int16_t tempC, bool quiet, bool powerful) {
+void Application::handleSetAcCommand(String commandName, JsonObject &root) {
     
+    bool status = root["status"];
+    bool quiet = root["quite"];
+    bool powerful = root["powerful"];
+
+    int16_t tempC = root["temperature"];
+    int16_t fanLevel = root["fan"];
+
     dakinir.begin();
 
     if(status){
@@ -144,4 +151,6 @@ void Application::handleSetAcCommand(bool status, int16_t fanLevel, int16_t temp
     dakinir.setSwingHorizontal(false);
 
     dakinir.send();
+
+    logger.trace("Send command to AC done.");
 }

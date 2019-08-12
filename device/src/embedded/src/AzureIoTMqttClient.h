@@ -1,5 +1,5 @@
-#ifndef CloudClient_h
-#define CloudClient_h
+#ifndef AzureIoTMqttClient_h
+#define AzureIoTMqttClient_h
 
 #include <stdint.h>
 #include <ESP8266WiFi.h>
@@ -10,9 +10,9 @@
 
 #include "AppConfig.h"
 
-#define SETACCOMMAND_CALLBACK_SIGNATURE std::function<void(bool, int16_t, int16_t, bool, bool)> onSetAcCommandCallback
+#define SETACCOMMAND_CALLBACK_SIGNATURE std::function<void(String, JsonObject&)> onCommandCallback
 
-class CloudClient {
+class AzureIoTMqttClient {
 private:
     BearSSL::WiFiClientSecure wifiClient;
     AppConfig& config;
@@ -22,15 +22,15 @@ private:
     void loadCACert();
     boolean connect();
     
-    log4Esp::Logger logger = log4Esp::Logger("CloudClient");
+    log4Esp::Logger logger = log4Esp::Logger("AzureIoTMqttClient");
     void reconnectIfNecessary();
 public:
+    AzureIoTMqttClient(AppConfig&);   
     void callback(char*, uint8_t*, unsigned int);
-    CloudClient(AppConfig&);   
     
     void setup(String);
     
-    void onSetAcCommand(SETACCOMMAND_CALLBACK_SIGNATURE);
+    void onCommand(SETACCOMMAND_CALLBACK_SIGNATURE);
 	void loop();
     void send(JsonObject& data);
 };

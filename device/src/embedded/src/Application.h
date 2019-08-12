@@ -10,7 +10,7 @@
 #include <ir_Daikin.h>
 #include <Log4Esp.h>
 
-#include "CloudClient.h"
+#include "AzureIoTMqttClient.h"
 #include "SensorReader.h"
 #include "AppConfig.h"
 
@@ -30,7 +30,7 @@ private:
     IRDaikinESP dakinir;
 
     SensorReader sensorReader;
-    CloudClient cloudClient;
+    AzureIoTMqttClient azureIoTMqttClient;
 
     log4Esp::Logger logger = log4Esp::Logger("Application");
 
@@ -43,7 +43,7 @@ private:
     void initializeFileSystem();
 
     void handleSensorUpdate(float humidity, float tempC, float tempF, float heatIndexC, float heatIndexF);
-    void handleSetAcCommand(bool status, int16_t fanLevel, int16_t tempC, bool quiet, bool powerful);
+    void handleSetAcCommand(String, JsonObject&);
 public:
     Application();   
     void boostrap();
