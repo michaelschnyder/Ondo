@@ -9,6 +9,7 @@ void setup() {
 
   // Wait for serial to initialize.
   while(!Serial) { }
+  Serial.println();
   
   app.boostrap();
 }

@@ -88,7 +88,7 @@ void Application::startupBanner() {
   logger.trace("Device Started");
   logger.trace("-------------------------------------");
   logger.trace("Device Id: %s", deviceId);
-  logger.trace("-------------------------------------\n");
+  logger.trace("-------------------------------------");
 }
 
 void Application::initializeFileSystem() {
