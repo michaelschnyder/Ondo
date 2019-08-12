@@ -23,6 +23,7 @@ private:
     boolean connect();
     
     log4Esp::Logger logger = log4Esp::Logger("AzureIoTMqttClient");
+    void report(PubSubClient &client, log4Esp::Logger &logger, String path);
     void reconnectIfNecessary();
 public:
     AzureIoTMqttClient(AppConfig&);   
@@ -33,6 +34,10 @@ public:
     void onCommand(SETACCOMMAND_CALLBACK_SIGNATURE);
 	void loop();
     void send(JsonObject& data);
+    void report(String, int);
+    void report(String, float);
+    void report(String, String);
+    void report(JsonObject&);
 };
 
 #endif

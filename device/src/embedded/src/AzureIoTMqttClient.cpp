@@ -5,6 +5,8 @@ int port = 8883;
 String mqtt_user;
 String inbound_topic; 
 String outbound_topic;
+String reportingProp_topic;
+
 String deviceId;
 
 boolean clientReady = false;
@@ -27,9 +29,11 @@ void AzureIoTMqttClient::setup(String devId) {
   deviceId = devId;
   mqtt_server = AzureIoTMqttClient::config.getAzIoTHubName() + '.' + domain;
   
-  mqtt_user = mqtt_server + "/" + deviceId;
+  mqtt_user = mqtt_server + "/" + deviceId + "/?api-version=2018-06-30";
   inbound_topic = "devices/" + deviceId + "/messages/devicebound/#";
   outbound_topic = "devices/" + deviceId + "/messages/events/";
+  reportingProp_topic = "$iothub/twin/res/#";
+
   int maxAttempts = 5;
 
   for(int i = 0; i < maxAttempts; i++) {
@@ -86,7 +90,11 @@ void AzureIoTMqttClient::callback(char* topic, byte* payload, unsigned int lengt
   buffer[length] = '\0'; // Manually add null-termination at given lenght since PubSub is reusing the buffer;
 
   String message = String(buffer);
-  logger.verbose("Received Message from Broker. Lenght: %d, Content: '%s'", length, message.c_str());
+  logger.verbose("New Message from Broker. Topic: '%s', Lenght: %d, Content: '%s'", topic, length, message.c_str());
+
+  if (length == 0) {
+    return;
+  }
 
   DynamicJsonBuffer jsonBuffer;
   JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
@@ -138,6 +146,11 @@ boolean AzureIoTMqttClient::connect() {
     return false;
   }
 
+  if(!client.subscribe(reportingProp_topic.c_str())) {
+    logger.error("Unable to subscribe to Reported Properties topic on '%s'", reportingProp_topic.c_str());
+    return false;
+  }
+
   logger.verbose("Subscribe to topic successful. Sending welcome message to '%s'", outbound_topic.c_str());  
   
   if (!AzureIoTMqttClient::client.publish(outbound_topic.c_str(), "hello world")) {
@@ -145,7 +158,7 @@ boolean AzureIoTMqttClient::connect() {
     return false;
   }
 
-  logger.verbose("Welome message send successful");
+  logger.verbose("Welcome message send successful");
   
   return true;
 }
@@ -191,6 +204,34 @@ void AzureIoTMqttClient::send(JsonObject& data) {
   data.printTo(buffer);
 
   AzureIoTMqttClient::client.publish("devices/Ondo-3c71bf3168b1/messages/events/", buffer);
+}
+void AzureIoTMqttClient::report(String propertyName, int value) {
+  String patch = "{\"" + propertyName + "\": " + value + "}";
+  AzureIoTMqttClient::report(AzureIoTMqttClient::client, logger, patch);  
+}
+void AzureIoTMqttClient::report(String propertyName, String value) {
+  String patch = "{\"" + propertyName + "\": \"" + value + "\"}";
+  AzureIoTMqttClient::report(AzureIoTMqttClient::client, logger, patch);  
+}
+void AzureIoTMqttClient::report(JsonObject& value) {
+  char patch[512];
+  value.printTo(patch);
+  AzureIoTMqttClient::report(AzureIoTMqttClient::client, logger, patch);  
+}
+void AzureIoTMqttClient::report(String propertyName, float value) {
+  String patch = "{\"" + propertyName + "\": " + value + "}";
+  AzureIoTMqttClient::report(AzureIoTMqttClient::client, logger, patch);  
+}
+
+void AzureIoTMqttClient::report(PubSubClient &client, log4Esp::Logger &logger, String patch) {
+  int rid = millis();
+    
+  char topic[100] = "";
+  sprintf(topic, "$iothub/twin/PATCH/properties/reported/?$rid=%d", rid);
+
+  if (!AzureIoTMqttClient::client.publish(topic, patch.c_str())) {
+    logger.error("Unable to publish Reported Property update to '%s'. Update was: '%s'", topic, patch.c_str());
+  }
 }
 
 void AzureIoTMqttClient::onCommand(SETACCOMMAND_CALLBACK_SIGNATURE) {
