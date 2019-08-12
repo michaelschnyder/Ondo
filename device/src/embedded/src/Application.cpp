@@ -116,16 +116,19 @@ void Application::handleSensorUpdate(float humidity, float tempC, float tempF, f
   
   StaticJsonBuffer<500> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
-  root["roomHumidity"] = humidity;
-  root["roomTemp"] = tempC;
+  root["currentHumidity"] = humidity;
+  root["currentTempC"] = tempC;
   // root["acPower"] = acPower;
   
+  // Send as message to default event bus
   azureIoTMqttClient.send(root);
-  // Serial.println("Reported!");
-  /*
-  azureIoTMqttClient.report("humidity", humidity);
-  azureIoTMqttClient.report("tempC", tempC);
-  */
+
+  // Send individual reported properties
+  // azureIoTMqttClient.report("humidity", humidity);
+  // azureIoTMqttClient.report("tempC", tempC);
+
+  azureIoTMqttClient.report(root);
+
 }
 
 void Application::handleSetAcCommand(String commandName, JsonObject &root) {
