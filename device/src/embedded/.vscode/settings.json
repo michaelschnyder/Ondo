@@ -55,7 +55,8 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "*.tcc": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "regex": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }
