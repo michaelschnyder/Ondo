@@ -1,18 +1,12 @@
 //Load HTTP module
-const http = require("http");
-const hostname = '127.0.0.1';
-const port = process.env.PORT || 3000;
+const http = require('http');
 
-//Create HTTP server and listen on port 3000 for requests
-const server = http.createServer((req, res) => {
-
-  //Set the response HTTP header with HTTP status and Content type
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World\n');
+const server = http.createServer((request, response) => {
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.end("Hello World!");
 });
 
-//listen for request on port 3000, and as a callback function have the port listened on logged
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+const port = process.env.PORT || 1337;
+server.listen(port);
+
+console.log("Server running at http://localhost:%d", port);
