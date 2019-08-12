@@ -1,2 +1,2 @@
 [config]
-project = cloud/src
+project = ./cloud/src/
