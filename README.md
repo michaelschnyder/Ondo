@@ -1,4 +1,6 @@
 # Ondo (温度)
+<sup>**Backend**</sup> [![Build status](https://dev.azure.com/ondo-ea/Ondo/_apis/build/status/Cloud)](https://dev.azure.com/ondo-ea/Ondo/_build/latest?definitionId=2)
+<sup>**Firmware**</sup> [![Build status](https://dev.azure.com/ondo-ea/Ondo/_apis/build/status/Firmware)](https://dev.azure.com/ondo-ea/Ondo/_build/latest?definitionId=3)
 
 Project that aims to control multiple Daikin aircons by using multiple ESP8266 boards and cloud backing.
 
