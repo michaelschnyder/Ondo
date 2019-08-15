@@ -4,12 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha ./tests --recursive",
     "start": "node index.js"
   },
-  "author": "",
+  "author": "RebekkaZ",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "azure-iothub": "^1.10.0",
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "mocha": "^6.2.0",
+    "node-schedule": "^1.3.2"
   }
 }

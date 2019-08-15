@@ -1,12 +1,22 @@
-//Load HTTP module
-const http = require('http');
+const express = require('express')
+const app = express()
+var createError = require('http-errors')
+const port = process.env.PORT || 3000
+const shdlr = require('./services/scheduler');
 
-const server = http.createServer((request, response) => {
-    response.writeHead(200, {"Content-Type": "text/plain"});
-    response.end("Hello World!");
+require('dotenv').config();
+
+var indexRouter = require('./routes/index.routes');
+app.use('/', indexRouter);
+
+app.use(function (req, res, next) {
+  next(createError(404));
 });
 
-const port = process.env.PORT || 1337;
-server.listen(port);
+app.listen(port, function () {
+  console.log(`App listening on port ${port}!`)
+  shdlr.scheduledJobs();
+});
 
-console.log("Server running at http://localhost:%d", port);
+module.exports = app
+
