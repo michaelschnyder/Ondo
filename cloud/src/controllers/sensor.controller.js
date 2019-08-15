@@ -5,6 +5,7 @@ var connectionString = process.env.AZURE_CONNECTION_STRING;
 var registry = Registry.fromConnectionString(connectionString);
 
 var Sensor = require("../models/sensor.model");
+var Device = require("../models/device.model");
 
 exports.readSensorData = (req, res) => {
     var query = registry.createQuery('SELECT * FROM devices', 100);
@@ -22,3 +23,22 @@ exports.readSensorData = (req, res) => {
         });
     });
 };
+
+exports.getTwins = (req, res) => {
+    var query = registry.createQuery('SELECT * FROM devices', 100);
+    query.nextAsTwin()
+    .then(q => {
+        var devices = new Array();
+        q.result.forEach(function(twin) {
+            //TODO: Add Location
+            var device = new Device(twin.deviceId)
+            console.log(device);
+            devices.push(device.fields);
+    });
+        res.send(devices);
+    }).catch(err => {
+        res.status(500).send({
+            message: err.message || "Some error occurred while retrieving Entry."
+        });
+    });
+}

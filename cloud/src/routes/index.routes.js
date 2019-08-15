@@ -19,4 +19,6 @@ router.post('/ac', urlencodedParser, ac.sendAcSetting);
 //Get current Ac Settings to Device
 router.get('/ac', ac.getAcSettings);
 
+router.get('/devices', sensor.getTwins);
+
 module.exports = router;
