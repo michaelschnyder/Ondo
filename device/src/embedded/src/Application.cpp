@@ -109,6 +109,8 @@ void Application::initializeFileSystem() {
 
 void Application::wireEventHandlers() {
   azureIoTMqttClient.onCommand([this](String a, JsonObject &b) { handleSetAcCommand(a, b); });
+  azureIoTMqttClient.onDesiredPropertyChange([this](JsonObject &a, int b) { handleDesiredPropertiesUpdate(a, b); });
+
   sensorReader.onUpdate([this](float a, float b, float c, float d, float e) { handleSensorUpdate(a, b, c, d, e); });
 }
 
@@ -131,33 +133,48 @@ void Application::handleSensorUpdate(float humidity, float tempC, float tempF, f
 
 }
 
+void Application::handleDesiredPropertiesUpdate(JsonObject &properties, int version) {
+  updateCurrentAcState(properties);
+  sendAcStateToAircon();
+}
+
 void Application::handleSetAcCommand(String commandName, JsonObject &root) {
+  updateCurrentAcState(root);
+  sendAcStateToAircon();
+}
+
+void Application::updateCurrentAcState(JsonObject &settings) {
+  currentAcState.devicePower = settings.containsKey("devicePower") ? settings["devicePower"] : true;
+  currentAcState.targetTempC = settings.containsKey("targetTempC") ? settings["targetTempC"] : 25;
+  currentAcState.fanMode = settings.containsKey("fanMode") ? settings["fanMode"] : 1;
+
+  currentAcState.quietOn =    settings.containsKey("quietOn") ? settings["quietOn"] : true;
+  currentAcState.powerfulOn = settings.containsKey("powerfulOn") ? settings["powerfulOn"] : false ;
+  currentAcState.swingHOn =   settings.containsKey("swingHOn") ? settings["swingHOn"] : false;
+  currentAcState.swingVOn =   settings.containsKey("swingVOn") ? settings["swingVOn"] : false;
+}
+
+void Application::sendAcStateToAircon() {
     
-    bool status = root["status"];
-    bool quiet = root["quiet"];
-    bool powerful = root["powerful"];
-
-    int16_t tempC = root["temperature"];
-    int16_t fanLevel = root["fan"];
-
     dakinir.begin();
 
-    if(status){
+    if(currentAcState.devicePower){
       dakinir.on();
     }else{
       dakinir.off();
     }
 
-    dakinir.setFan(fanLevel);
+    dakinir.setFan(currentAcState.fanMode);
     dakinir.setMode(kDaikinCool);
-    dakinir.setTemp(tempC);
-    dakinir.setQuiet(quiet);
-    dakinir.setPowerful(powerful);
+    dakinir.setTemp(currentAcState.targetTempC);
+    dakinir.setQuiet(currentAcState.quietOn);
+    dakinir.setPowerful(currentAcState.powerfulOn);
     
-    dakinir.setSwingVertical(false);
-    dakinir.setSwingHorizontal(false);
+    dakinir.setSwingHorizontal(currentAcState.swingHOn);
+    dakinir.setSwingVertical(currentAcState.swingVOn);
 
     dakinir.send();
 
-    logger.trace("Send command to AC done.");
+    logger.trace("AC IR Update send. DevicePower: %i, TargetTemp: %i, FanMode: %i, QuietOn: %i, PowerfulOn: %i, SwingHOn: %i, SwingVOn: %i", 
+          currentAcState.devicePower, currentAcState.targetTempC, currentAcState.fanMode, currentAcState.quietOn, currentAcState.powerfulOn, currentAcState.swingHOn, currentAcState.swingVOn);
 }
