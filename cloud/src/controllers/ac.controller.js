@@ -19,14 +19,14 @@ exports.getAcSettings = (req, res) => {
             var acSettings = new Array();
             q.result.forEach(function (twin) {
                 var ac = {
-                    "deviceId": twin.deviceId || null,
-                    "devicePower": twin.properties.desired.devicePower || null,
-                    "targetTempC": twin.properties.desired.targetTempC || null,
-                    "fanMode": twin.properties.desired.fanMode || null,
-                    "powerfulOn": twin.properties.desired.powerfulOn || null,
-                    "quiteOn": twin.properties.desired.quiteOn || null,
-                    "swingVOn": twin.properties.desired.swingVOn || null,
-                    "swingHOn": twin.properties.desired.swingHOn || null
+                    "deviceId": twin.deviceId,
+                    "devicePower": twin.properties.desired.devicePower,
+                    "targetTempC": twin.properties.desired.targetTempC,
+                    "fanMode": twin.properties.desired.fanMode,
+                    "powerfulOn": twin.properties.desired.powerfulOn,
+                    "quiteOn": twin.properties.desired.quiteOn,
+                    "swingVOn": twin.properties.desired.swingVOn,
+                    "swingHOn": twin.properties.desired.swingHOn
                 };
                 acSettings.push(ac);
             });
