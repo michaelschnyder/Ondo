@@ -3,7 +3,6 @@ var Registry = require('azure-iothub').Registry;
 var Ac = require("../models/ac.model");
 
 var connectionString = process.env.AZURE_CONNECTION_STRING;
-var targetDevice = 'Ondo-3c71bf3168b1';
 
 var client = Client.fromConnectionString(connectionString);
 
@@ -32,46 +31,50 @@ exports.getAcSettings = (req, res) => {
 };
 
 exports.sendAcSetting = (req, res) => {
+    var err = SendAcSettingToAzure(req.query.deviceId, req.body.devicePower, req.body.targetTemp, req.body.quiteOn, req.body.powerfulOn, req.body.fanMode, req.body.swingVOn, req.body.swingHOn);
+    if (err) {
+        res.status(500).send({
+            message: err.message || "Some error occurred while updating properties."
+        });
+    }
+    else {
+        res.status(200).send();
+    }
+};
+
+exports.SendAcSettingToAzure = (deviceId, devicePower, targetTemp, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn) => {
     client.open(function (err) {
         if (err) {
             console.error('could not open IotHub client');
-            res.status(500).send({
-                message: err.message || "Some error occurred while connecting to Device."
-            });
-        } else {
+            return err;
+        }
+        else {
             console.log('client opened');
-
-            registry.getTwin(targetDevice, async (err, twin) => {
+            registry.getTwin(deviceId, async (err, twin) => {
                 if (err) {
-                    res.status(500).send({
-                        message: err.message || "Some error occurred while getting Device."
-                    });
-                } else {
+                    return err;
+                }
+                else {
                     console.log('Got device twin');
                 }
-
                 var twinPatchAc = {
                     properties: {
                         desired: {
-                            status: req.body.status,
-                            temperature: req.body.temperature,
-                            quite: req.body.quite,
-                            powerful: req.body.powerful,
-                            fan: req.body.fan,
+                            devicePower: devicePower,
+                            targetTemp: targetTemp,
+                            quiteOn: quiteOn,
+                            powerfulOn: powerfulOn,
+                            fanMode: fanMode,
+                            swingVOn: swingVOn,
+                            swingHOn: swingHOn,
                         }
                     }
-                }
-
+                };
                 twin.update(twinPatchAc, function (err) {
-                    if (err) {
-                        res.status(500).send({
-                            message: err.message || "Some error occurred while updating properties."
-                        });
-                    } else {
-                        res.status(200).send();
-                    }
+                    return err;
                 });
             });
         }
     });
-};
+}
+
