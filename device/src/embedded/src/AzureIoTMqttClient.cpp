@@ -93,11 +93,11 @@ void AzureIoTMqttClient::callback(char* topic, byte* payload, unsigned int lengt
   String topicString = String(topic);
 
   if (topicString.startsWith("$iothub/twin/res/204")) {
-    logger.verbose("Reported property update successful.");
+    logger.verbose("Reported property update accepted by broker.");
     return;
   }
   else if (topicString.startsWith("$iothub/twin/res")) {
-    logger.warning("Reported Property got rejected");
+    logger.warning("Reported Property got rejected by broker.");
     return;
   }
 
