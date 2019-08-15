@@ -5,7 +5,8 @@ int port = 8883;
 String mqtt_user;
 String inbound_topic; 
 String outbound_topic;
-String reportingProp_topic;
+char* reportingProp_topic = "$iothub/twin/res/#";
+char* desiredProp_topic = "$iothub/twin/PATCH/properties/desired/#";
 
 String deviceId;
 
@@ -32,7 +33,7 @@ void AzureIoTMqttClient::setup(String devId) {
   mqtt_user = mqtt_server + "/" + deviceId + "/?api-version=2018-06-30";
   inbound_topic = "devices/" + deviceId + "/messages/devicebound/#";
   outbound_topic = "devices/" + deviceId + "/messages/events/";
-  reportingProp_topic = "$iothub/twin/res/#";
+
 
   int maxAttempts = 5;
 
@@ -88,13 +89,36 @@ void AzureIoTMqttClient::callback(char* topic, byte* payload, unsigned int lengt
   
   char* buffer = (char*)payload;
   buffer[length] = '\0'; // Manually add null-termination at given lenght since PubSub is reusing the buffer;
-
   String message = String(buffer);
-  logger.verbose("New Message from Broker. Topic: '%s', Lenght: %d, Content: '%s'", topic, length, message.c_str());
+  String topicString = String(topic);
+
+  if (topicString.startsWith("$iothub/twin/res/204")) {
+    logger.verbose("Reported property update successful.");
+    return;
+  }
+  else if (topicString.startsWith("$iothub/twin/res")) {
+    logger.warning("Reported Property got rejected");
+    return;
+  }
 
   if (length == 0) {
     return;
   }
+
+  if (topicString.startsWith("$iothub/twin/PATCH/properties/desired")) {
+    logger.trace("Desired property change update");
+
+    DynamicJsonBuffer jsonBuffer;
+    JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
+
+    if (onDesiredPropertyChangeCallback != NULL) {
+      onDesiredPropertyChangeCallback(jsonMessage, 0);
+    }
+
+    return;
+  }
+
+  logger.verbose("New Message from Broker. Topic: '%s', Lenght: %d, Content: '%s'", topic, length, message.c_str());
 
   DynamicJsonBuffer jsonBuffer;
   JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
@@ -139,15 +163,20 @@ boolean AzureIoTMqttClient::connect() {
     return false;    
   }
 
-  logger.trace("Connection established to '%s:%d'. Subscribing for inbound topic '%s'", mqtt_server.c_str(), port, inbound_topic.c_str());      
+  logger.trace("Connection established to '%s:%d'. Subscribing to topics: '%s', '%s', '%s'", mqtt_server.c_str(), port, inbound_topic.c_str(), reportingProp_topic, desiredProp_topic);      
     
   if(!client.subscribe(inbound_topic.c_str())) {
-    logger.fatal("Subscribe to topic failed");
+    logger.fatal("Subscribe to event topic failed");
     return false;
   }
 
-  if(!client.subscribe(reportingProp_topic.c_str())) {
-    logger.error("Unable to subscribe to Reported Properties topic on '%s'", reportingProp_topic.c_str());
+  if(!client.subscribe(reportingProp_topic)) {
+    logger.error("Unable to subscribe to Reported Properties topic on '%s'", reportingProp_topic);
+    return false;
+  }
+
+  if(!client.subscribe(desiredProp_topic)) {
+    logger.error("Unable to subscribe to Desired Properties topic on '%s'", desiredProp_topic);
     return false;
   }
 
@@ -234,6 +263,10 @@ void AzureIoTMqttClient::report(PubSubClient &client, log4Esp::Logger &logger, S
   }
 }
 
-void AzureIoTMqttClient::onCommand(SETACCOMMAND_CALLBACK_SIGNATURE) {
+void AzureIoTMqttClient::onCommand(ONCOMMAND_CALLBACK_SIGNATURE) {
     this->onCommandCallback = onCommandCallback;
+}
+
+void AzureIoTMqttClient::onDesiredPropertyChange(DESIREDPROPERTYCHANGE_CALLBACK_SIGNATURE) {
+    this->onDesiredPropertyChangeCallback = onDesiredPropertyChangeCallback;
 }
