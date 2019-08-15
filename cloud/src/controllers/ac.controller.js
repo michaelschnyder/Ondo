@@ -1,6 +1,5 @@
 var Client = require('azure-iothub').Client;
 var Registry = require('azure-iothub').Registry;
-var Ac = require("../models/ac.model");
 
 var connectionString = process.env.AZURE_CONNECTION_STRING;
 
@@ -19,8 +18,17 @@ exports.getAcSettings = (req, res) => {
         .then(q => {
             var acSettings = new Array();
             q.result.forEach(function (twin) {
-                var ac = new Ac(twin.deviceId, twin.properties.desired.status, twin.properties.desired.temperature, twin.properties.desired.quite, twin.properties.desired.powerful, twin.properties.desired.fan);
-                acSettings.push(ac.fields);
+                var ac = {
+                    "deviceId": twin.deviceId || null,
+                    "devicePower": twin.properties.desired.devicePower || null,
+                    "targetTempC": twin.properties.desired.targetTempC || null,
+                    "fanMode": twin.properties.desired.fanMode || null,
+                    "powerfulOn": twin.properties.desired.powerfulOn || null,
+                    "quiteOn": twin.properties.desired.quiteOn || null,
+                    "swingVOn": twin.properties.desired.swingVOn || null,
+                    "swingHOn": twin.properties.desired.swingHOn || null
+                };
+                acSettings.push(ac);
             });
             res.send(acSettings);
         }).catch(err => {
@@ -31,7 +39,7 @@ exports.getAcSettings = (req, res) => {
 };
 
 exports.sendAcSetting = (req, res) => {
-    var err = SendAcSettingToAzure(req.query.deviceId, req.body.devicePower, req.body.targetTemp, req.body.quiteOn, req.body.powerfulOn, req.body.fanMode, req.body.swingVOn, req.body.swingHOn);
+    var err = SendAcSettingToAzure(req.query.deviceId, req.body.devicePower, req.body.targetTempC, req.body.quiteOn, req.body.powerfulOn, req.body.fanMode, req.body.swingVOn, req.body.swingHOn);
     if (err) {
         res.status(500).send({
             message: err.message || "Some error occurred while updating properties."
@@ -42,7 +50,7 @@ exports.sendAcSetting = (req, res) => {
     }
 };
 
-exports.SendAcSettingToAzure = (deviceId, devicePower, targetTemp, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn) => {
+exports.SendAcSettingToAzure = (deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn) => {
     client.open(function (err) {
         if (err) {
             console.error('could not open IotHub client');
@@ -61,7 +69,7 @@ exports.SendAcSettingToAzure = (deviceId, devicePower, targetTemp, quiteOn, powe
                     properties: {
                         desired: {
                             devicePower: devicePower,
-                            targetTemp: targetTemp,
+                            targetTempC: targetTempC,
                             quiteOn: quiteOn,
                             powerfulOn: powerfulOn,
                             fanMode: fanMode,
