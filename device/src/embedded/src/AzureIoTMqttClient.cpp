@@ -232,8 +232,11 @@ void AzureIoTMqttClient::send(JsonObject& data) {
   char buffer[512];
   data.printTo(buffer);
 
-  AzureIoTMqttClient::client.publish("devices/Ondo-3c71bf3168b1/messages/events/", buffer);
+  if(!AzureIoTMqttClient::client.publish(outbound_topic.c_str(), buffer)) {
+    logger.error("Unable to publish message '%s'", buffer);
+    }
 }
+
 void AzureIoTMqttClient::report(String propertyName, int value) {
   String patch = "{\"" + propertyName + "\": " + value + "}";
   AzureIoTMqttClient::report(AzureIoTMqttClient::client, logger, patch);  
