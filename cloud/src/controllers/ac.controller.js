@@ -10,7 +10,12 @@ var client = Client.fromConnectionString(connectionString);
 var registry = Registry.fromConnectionString(connectionString);
 
 exports.getAcSettings = (req, res) => {
-    var query = registry.createQuery('SELECT * FROM devices', 100);
+    var query;
+    if (req.query.deviceId == undefined) {
+        query = registry.createQuery("SELECT * FROM devices", 100);
+    } else {
+        query = registry.createQuery("SELECT * FROM devices WHERE deviceId = '" + req.query.deviceId + "'", 100);
+    }
     query.nextAsTwin()
         .then(q => {
             var acSettings = new Array();
