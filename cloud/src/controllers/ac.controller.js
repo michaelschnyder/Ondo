@@ -7,7 +7,7 @@ var client = Client.fromConnectionString(connectionString);
 
 var registry = Registry.fromConnectionString(connectionString);
 
-exports.getAcSettings = (req, res) => {
+var getAcSettings = function(req, res) {
     var query;
     if (req.query.deviceId == undefined) {
         query = registry.createQuery("SELECT * FROM devices", 100);
@@ -38,7 +38,7 @@ exports.getAcSettings = (req, res) => {
         });
 };
 
-exports.sendAcSetting = (req, res) => {
+var sendAcSetting = function (req, res) {
     var err = SendAcSettingToAzure(req.query.deviceId, req.body.devicePower, req.body.targetTempC, req.body.quiteOn, req.body.powerfulOn, req.body.fanMode, req.body.swingVOn, req.body.swingHOn);
     if (err) {
         res.status(500).send({
@@ -50,7 +50,7 @@ exports.sendAcSetting = (req, res) => {
     }
 };
 
-exports.SendAcSettingToAzure = (deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn) => {
+var SendAcSettingToAzure = function (deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn) {
     client.open(function (err) {
         if (err) {
             console.error('could not open IotHub client');
@@ -85,4 +85,10 @@ exports.SendAcSettingToAzure = (deviceId, devicePower, targetTempC, quiteOn, pow
         }
     });
 }
+
+module.exports = {
+    SendAcSettingToAzure: SendAcSettingToAzure,
+    sendAcSetting: sendAcSetting,
+    getAcSettings: getAcSettings
+  }
 
