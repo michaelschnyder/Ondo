@@ -10,7 +10,8 @@
 
 #include "AppConfig.h"
 
-#define SETACCOMMAND_CALLBACK_SIGNATURE std::function<void(String, JsonObject&)> onCommandCallback
+#define ONCOMMAND_CALLBACK_SIGNATURE std::function<void(String, JsonObject&)> onCommandCallback
+#define DESIREDPROPERTYCHANGE_CALLBACK_SIGNATURE std::function<void(JsonObject&, int)> onDesiredPropertyChangeCallback
 
 class AzureIoTMqttClient {
 private:
@@ -18,7 +19,8 @@ private:
     AppConfig& config;
     PubSubClient client;
     
-    SETACCOMMAND_CALLBACK_SIGNATURE;
+    ONCOMMAND_CALLBACK_SIGNATURE;
+    DESIREDPROPERTYCHANGE_CALLBACK_SIGNATURE;
     void loadCACert();
     boolean connect();
     
@@ -31,7 +33,8 @@ public:
     
     void setup(String);
     
-    void onCommand(SETACCOMMAND_CALLBACK_SIGNATURE);
+    void onCommand(ONCOMMAND_CALLBACK_SIGNATURE);
+    void onDesiredPropertyChange(DESIREDPROPERTYCHANGE_CALLBACK_SIGNATURE);
 	void loop();
     void send(JsonObject& data);
     void report(String, int);

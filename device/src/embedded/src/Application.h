@@ -18,6 +18,7 @@
 #define DHTTYPE DHT22   
 
 #define IRPIN 4 //D2 = 4
+struct AcState { bool devicePower; int targetTempC; int fanMode = 1; bool quietOn = true; bool powerfulOn = false; bool swingHOn = false; bool swingVOn = false; };
 
 class Application {
 
@@ -32,6 +33,7 @@ private:
     SensorReader sensorReader;
     AzureIoTMqttClient azureIoTMqttClient;
 
+    AcState currentAcState;
     log4Esp::Logger logger = log4Esp::Logger("Application");
 
     char deviceId[10];
@@ -44,6 +46,10 @@ private:
 
     void handleSensorUpdate(float humidity, float tempC, float tempF, float heatIndexC, float heatIndexF);
     void handleSetAcCommand(String, JsonObject&);
+    void handleDesiredPropertiesUpdate(JsonObject&, int);
+    void updateCurrentAcState(JsonObject&);
+    void sendAcStateToAircon();
+
 public:
     Application();   
     void boostrap();
