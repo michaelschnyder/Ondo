@@ -17,7 +17,7 @@ exports.readSensorData = (req, res) => {
         .then(q => {
             var roomCondition = new Array();
             q.result.forEach(function (twin) {
-                var sensor = new Sensor(twin.deviceId, twin.properties.reported.tempC, twin.properties.reported.humidity)
+                var sensor = new Sensor(twin.deviceId, twin.properties.reported.currentTempC, twin.properties.reported.currentHumidity)
                 roomCondition.push(sensor);
 
             });
