@@ -7,7 +7,7 @@ var client = Client.fromConnectionString(connectionString);
 
 var registry = Registry.fromConnectionString(connectionString);
 
-var getAcSettings = function(req, res) {
+var getAcSettings = function (req, res) {
     var query;
     if (req.query.deviceId == undefined) {
         query = registry.createQuery("SELECT * FROM devices", 100);
@@ -90,5 +90,5 @@ module.exports = {
     SendAcSettingToAzure: SendAcSettingToAzure,
     sendAcSetting: sendAcSetting,
     getAcSettings: getAcSettings
-  }
+}
 
