@@ -1,41 +1,36 @@
-var schedule = require('node-schedule');
+var CronJob = require('cron').CronJob;
 var acController = require('../controllers/ac.controller');
 var ac = require('../data/ac');
 
 //Everyday at 11pm
-var ruleEverydayAt11pm = new schedule.RecurrenceRule();
-ruleEverydayAt11pm.dayOfWeek = 0 - 6;
-ruleEverydayAt11pm.hour = 23;
+var ruleEverydayAt11pm = '00 00 23 * * *';
 
 //Everyday at 10am
-var ruleEverydayAt10am = new schedule.RecurrenceRule();
-ruleEverydayAt10am.dayOfWeek = 0 - 6;
-ruleEverydayAt10am.hour = 10;
+var ruleEverydayAt10am = '00 00 10 * * *';
 
 //Everyday at 2am
-var ruleEverydayAt2am = new schedule.RecurrenceRule();
-ruleEverydayAt2am.dayOfWeek = 0 - 6;
-ruleEverydayAt2am.hour = 2;
+var ruleEverydayAt2am = '00 00 2 * * *';
 
 //Everyday at 6am
-var ruleEverydayAt6am = new schedule.RecurrenceRule();
-ruleEverydayAt6am.dayOfWeek = 0 - 6;
-ruleEverydayAt6am.hour = 6;
+var ruleEverydayAt6am = '00 00 6 * * *';
+
+var timeZone = "Asia/Singapore";
 
 exports.scheduledJobs = () => {
     //MasterRoom
-    schedule.scheduleJob(ruleEverydayAt11pm, function () { TurnOnAc(ac.MASTER_ROOM.fields.deviceId) });
-    schedule.scheduleJob(ruleEverydayAt10am, function () { TurnOffAc(ac.MASTER_ROOM.fields.deviceId) });
+
+    new CronJob(ruleEverydayAt11pm, function(){ TurnOnAc(ac.MASTER_ROOM.fields.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt10am, function(){ TurnOffAc(ac.MASTER_ROOM.fields.deviceId)}, null, true, timeZone);
 
     //GuestRoom
-    schedule.scheduleJob(ruleEverydayAt11pm, function () { TurnOffAc(ac.GUEST_ROOM.fields.deviceId) });
+    new CronJob(ruleEverydayAt11pm, function(){ TurnOffAc(ac.GUEST_ROOM.fields.deviceId)}, null, true, timeZone);
 
     //DiningRoom
-    schedule.scheduleJob(ruleEverydayAt11pm, function () { TurnOffAc(ac.DINING_ROOM.fields.deviceId) });
+    new CronJob(ruleEverydayAt11pm, function(){ TurnOffAc(ac.DINING_ROOM.fields.deviceId)}, null, true, timeZone);
 
     //LivingRoom 
-    schedule.scheduleJob(ruleEverydayAt2am, function () { TurnOffAc(ac.LIVING_ROOM.fields.deviceId) });
-    schedule.scheduleJob(ruleEverydayAt6am, function () { TurnOnAc(ac.LIVING_ROOM.fields.deviceId) });
+    new CronJob(ruleEverydayAt2am, function(){ TurnOffAc(ac.LIVING_ROOM.fields.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt6am, function(){ TurnOnAc(ac.LIVING_ROOM.fields.deviceId)}, null, true, timeZone);
 }
 
 function TurnOnAc(deviceId) {
@@ -43,10 +38,10 @@ function TurnOnAc(deviceId) {
     var devicePower = 1;
     var targetTempC = 24;
     var quiteOn = true;
-    var powerfulOn = true;
-    var fanMode = true;
-    var swingVOn = true;
-    var swingHOn = true;
+    var powerfulOn = false;
+    var fanMode = 1;
+    var swingVOn = false;
+    var swingHOn = false;
     acController.SendAcSettingToAzure(deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn);
 }
 
@@ -55,9 +50,9 @@ function TurnOffAc(deviceId) {
     var devicePower = 0;
     var targetTempC = 24;
     var quiteOn = true;
-    var powerfulOn = true;
-    var fanMode = true;
-    var swingVOn = true;
-    var swingHOn = true;
+    var powerfulOn = false;
+    var fanMode = 1;
+    var swingVOn = false;
+    var swingHOn = false;
     acController.SendAcSettingToAzure(deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn);
 }
