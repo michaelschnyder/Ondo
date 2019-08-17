@@ -88,61 +88,23 @@ void AzureIoTMqttClient::loadCACert() {
 void AzureIoTMqttClient::callback(char* topic, byte* payload, unsigned int length) {
   
   char* buffer = (char*)payload;
-  buffer[length] = '\0'; // Manually add null-termination at given lenght since PubSub is reusing the buffer;
-  String message = String(buffer);
+  payload[length] = '\0'; // Manually add null-termination at given lenght since PubSub is reusing the buffer;
+
   String topicString = String(topic);
 
-  if (topicString.startsWith("$iothub/twin/res/204")) {
-    logger.verbose("Reported property update accepted by broker.");
-    return;
-  }
-  else if (topicString.startsWith("$iothub/twin/res")) {
-    logger.warning("Reported Property got rejected by broker.");
+  if (handleReportedPropertyUpdateResponse(topicString)) {
     return;
   }
 
-  if (length == 0) {
+  if (handleDesiredPropertiesUpdate(topicString, buffer, length)) {
     return;
   }
 
-  if (topicString.startsWith("$iothub/twin/PATCH/properties/desired")) {
-    logger.trace("Desired property change update");
-
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
-
-    if (onDesiredPropertyChangeCallback != NULL) {
-      onDesiredPropertyChangeCallback(jsonMessage, 0);
-    }
-
+  if (handleCloudToDeviceCommand(topicString, buffer, length)) {
     return;
   }
 
-  logger.verbose("New Message from Broker. Topic: '%s', Lenght: %d, Content: '%s'", topic, length, message.c_str());
-
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
-
-  if(!jsonMessage.success()) {
-    logger.error("Unable to parse command from broker: '%s'", message.c_str());
-    return;
-  }
-
-  if (jsonMessage.containsKey("cmd")) {
-    String commandName = jsonMessage["cmd"];
-
-    if (onCommandCallback != NULL) {
-      logger.trace("Dispatching execution of command '%s'", commandName.c_str());
-      onCommandCallback(commandName, jsonMessage);
-    }
-    else {
-      logger.trace("No callback registered for command '%s'", commandName.c_str());
-    }
-
-    return;    
-  }
-  
-  logger.warning("Recieved unvalid message: '%s'", message.c_str());
+  logger.warning("Recieved message not handled: '%s'", buffer);
 }
 
 boolean AzureIoTMqttClient::connect() {
@@ -196,6 +158,88 @@ void AzureIoTMqttClient::loop() {
   AzureIoTMqttClient::client.loop();
 
   reconnectIfNecessary();
+}
+
+bool AzureIoTMqttClient::handleReportedPropertyUpdateResponse(String topic) {
+  
+  String topicPrefix = "$iothub/twin/res";
+
+  if (!topic.startsWith(topicPrefix)) {
+    return false;
+  }
+
+  String responseCode = topic.substring(topicPrefix.length() + 1, topicPrefix.length() + 4);
+  int ridPosStart = topic.indexOf("$rid") + 5;
+  int ridPosEnd = topic.indexOf("&", ridPosStart);
+  int versionPosStart = topic.indexOf("$version") + 9;
+  
+  String ridString = topic.substring(ridPosStart, ridPosEnd);
+  String versionString = topic.substring(versionPosStart);
+
+  int requestId = ridString.toInt();
+  int version = versionString.toInt();
+
+  if (responseCode == "204") {
+    logger.verbose("Reported property update (Request: %i) accepted by broker. Response Code: %s. New Version: %i", requestId, responseCode.c_str(), version);
+  }
+  else {
+    logger.warning("Reported Property (Request: %i) got rejected by broker. Response Code: %s", requestId, responseCode.c_str());
+  }
+  
+  return true;
+}
+
+bool AzureIoTMqttClient::handleDesiredPropertiesUpdate(String topic, char* payload, unsigned int length)
+{
+  if (topic.length() == 0) {
+    return false;
+  }
+
+  if (!topic.startsWith("$iothub/twin/PATCH/properties/desired")) {
+    return false;
+  }
+
+  logger.trace("Desired property change update");
+
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
+
+  if (onDesiredPropertyChangeCallback != NULL) {
+    onDesiredPropertyChangeCallback(jsonMessage, 0);
+  }
+
+  return true;
+}
+
+bool AzureIoTMqttClient::handleCloudToDeviceCommand(String topic, char* payload, unsigned int length) {
+  
+  if (topic.length() == 0) {
+    return false;
+  }
+
+  String message = String(payload);
+  logger.verbose("New Message from Broker. Topic: '%s', Lenght: %d, Content: '%s'", topic.c_str(), length, message.c_str());
+
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
+
+  if(!jsonMessage.success()) {
+    return false;
+  }
+
+  if (!jsonMessage.containsKey("cmd")) {
+    return false;
+  }
+
+  String commandName = jsonMessage["cmd"];
+
+  if (onCommandCallback != NULL) {
+    logger.trace("Dispatching execution of command '%s'", commandName.c_str());
+    onCommandCallback(commandName, jsonMessage);
+  }
+  else {
+    logger.trace("No callback registered for command '%s'", commandName.c_str());
+  }
 }
 
 void AzureIoTMqttClient::reconnectIfNecessary() {
