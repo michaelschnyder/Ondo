@@ -1,6 +1,4 @@
 var Registry = require('azure-iothub').Registry;
-var Sensor = require("../models/sensor.model");
-var Device = require("../models/device.model");
 
 var connectionString = process.env.AZURE_CONNECTION_STRING;
 
@@ -17,9 +15,12 @@ exports.readSensorData = (req, res) => {
         .then(q => {
             var roomCondition = new Array();
             q.result.forEach(function (twin) {
-                var sensor = new Sensor(twin.deviceId, twin.properties.reported.tempC, twin.properties.reported.humidity)
+                var sensor = {
+                    deviceId: twin.deviceId,
+                    currentTempC: twin.properties.reported.currentTempC,
+                    currentHumidity: twin.properties.reported.currentHumidity
+                }
                 roomCondition.push(sensor);
-
             });
 
             res.send(roomCondition);
@@ -37,7 +38,7 @@ exports.getTwins = (req, res) => {
             var devices = new Array();
             q.result.forEach(function (twin) {
                 //TODO: Add Location
-                var device = new Device(twin.deviceId)
+                var device = { deviceId: twin.deviceId }
                 devices.push(device.fields);
             });
             res.send(devices);
