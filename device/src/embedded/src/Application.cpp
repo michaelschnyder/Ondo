@@ -25,11 +25,15 @@ void Application::boostrap() {
     ESP.reset();
   }
   
+  remoteUpdater.setup(deviceId);
   sensorReader.setup();
   azureIoTMqttClient.setup(deviceId);
 }
 
 void Application::loop() {
+
+  remoteUpdater.handle();
+
   azureIoTMqttClient.loop();
   sensorReader.loop();
 
@@ -92,6 +96,7 @@ void Application::startupBanner() {
   logger.trace("Device Started");
   logger.trace("-------------------------------------");
   logger.trace("Device Id: %s", deviceId);
+  logger.trace(__FILE__ " " __DATE__ " " __TIME__);
   logger.trace("-------------------------------------");
 }
 

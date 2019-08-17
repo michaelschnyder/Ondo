@@ -12,6 +12,7 @@
 
 #include "AzureIoTMqttClient.h"
 #include "SensorReader.h"
+#include "RemoteUpdater.h"
 #include "AppConfig.h"
 
 #define DHTPIN 0 //D3 = 0
@@ -32,6 +33,7 @@ private:
 
     SensorReader sensorReader;
     AzureIoTMqttClient azureIoTMqttClient;
+    RemoteUpdater remoteUpdater;
 
     AcState currentAcState;
     SensorReading lastSensorReading;
@@ -44,6 +46,7 @@ private:
     void setGeneratedDeviceId();
     void startupBanner();
     void initializeFileSystem();
+    void initializeOTAUpdater();
 
     void handleSensorUpdate(float humidity, float tempC, float tempF, float heatIndexC, float heatIndexF);
     void handleSetAcCommand(String, JsonObject&);
