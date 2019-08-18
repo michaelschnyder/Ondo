@@ -27,6 +27,10 @@ private:
     log4Esp::Logger logger = log4Esp::Logger("AzureIoTMqttClient");
     void report(PubSubClient &client, log4Esp::Logger &logger, String path);
     void reconnectIfNecessary();
+    bool handleReportedPropertyUpdateResponse(String topic);
+    bool handleDesiredPropertiesUpdate(String topic, char *payload, unsigned int length);
+    bool handleCloudToDeviceCommand(String topic, char *payload, unsigned int length);
+
 public:
     AzureIoTMqttClient(AppConfig&);   
     void callback(char*, uint8_t*, unsigned int);

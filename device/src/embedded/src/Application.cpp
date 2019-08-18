@@ -25,11 +25,15 @@ void Application::boostrap() {
     ESP.reset();
   }
   
+  remoteUpdater.setup(deviceId);
   sensorReader.setup();
   azureIoTMqttClient.setup(deviceId);
 }
 
 void Application::loop() {
+
+  remoteUpdater.handle();
+
   azureIoTMqttClient.loop();
   sensorReader.loop();
 
@@ -43,6 +47,10 @@ void Application::loop() {
 
     logger.fatal("Wifi connection failed and unable to reconnect after %d trials during %ds. Resetting.", 12, 12 * wifiConnectionTimeoutInMs / 1000);
     ESP.reset();
+  }
+
+  if(millis() - lastSensorReading.lastUpdate >= 3600 * 60) {
+    publishCurrentSensorReadings();
   }
 }
 
@@ -88,6 +96,7 @@ void Application::startupBanner() {
   logger.trace("Device Started");
   logger.trace("-------------------------------------");
   logger.trace("Device Id: %s", deviceId);
+  logger.trace(__FILE__ " " __DATE__ " " __TIME__);
   logger.trace("-------------------------------------");
 }
 
@@ -103,7 +112,7 @@ void Application::initializeFileSystem() {
       }
   }
   else {
-      logger.trace("Filesystem ready. Loading configuration...");    
+      logger.trace("Filesystem ready for usage.");    
   }
 }
 
@@ -116,21 +125,15 @@ void Application::wireEventHandlers() {
 
 void Application::handleSensorUpdate(float humidity, float tempC, float tempF, float heatIndexC, float heatIndexF) {
   
-  StaticJsonBuffer<500> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
-  root["currentHumidity"] = humidity;
-  root["currentTempC"] = tempC;
-  // root["acPower"] = acPower;
-  
-  // Send as message to default event bus
-  azureIoTMqttClient.send(root);
+  bool hasChanged = (humidity != lastSensorReading.humidity || tempC != lastSensorReading.tempC);
 
-  // Send individual reported properties
-  // azureIoTMqttClient.report("humidity", humidity);
-  // azureIoTMqttClient.report("tempC", tempC);
+  if (hasChanged) {
+    lastSensorReading.lastUpdate = millis();
+    lastSensorReading.humidity = humidity;
+    lastSensorReading.tempC = tempC;
 
-  azureIoTMqttClient.report(root);
-
+    publishCurrentSensorReadings();
+  }
 }
 
 void Application::handleDesiredPropertiesUpdate(JsonObject &properties, int version) {
@@ -177,4 +180,16 @@ void Application::sendAcStateToAircon() {
 
     logger.trace("AC IR Update send. DevicePower: %i, TargetTemp: %i, FanMode: %i, QuietOn: %i, PowerfulOn: %i, SwingHOn: %i, SwingVOn: %i", 
           currentAcState.devicePower, currentAcState.targetTempC, currentAcState.fanMode, currentAcState.quietOn, currentAcState.powerfulOn, currentAcState.swingHOn, currentAcState.swingVOn);
+}
+
+void Application::publishCurrentSensorReadings() {
+ StaticJsonBuffer<500> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+
+  root["currentHumidity"] = lastSensorReading.humidity;
+  root["currentTempC"] = lastSensorReading.tempC;
+  
+  // Send as message to default event bus
+  azureIoTMqttClient.send(root);
+  azureIoTMqttClient.report(root);
 }
