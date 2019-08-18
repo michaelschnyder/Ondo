@@ -19,18 +19,18 @@ var timeZone = "Asia/Singapore";
 exports.scheduledJobs = () => {
     //MasterRoom
 
-    new CronJob(ruleEverydayAt11pm, function(){ TurnOnAc(ac.MASTER_ROOM.fields.deviceId)}, null, true, timeZone);
-    new CronJob(ruleEverydayAt10am, function(){ TurnOffAc(ac.MASTER_ROOM.fields.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt11pm, function(){ TurnOnAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt10am, function(){ TurnOffAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
 
     //GuestRoom
-    new CronJob(ruleEverydayAt11pm, function(){ TurnOffAc(ac.GUEST_ROOM.fields.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt11pm, function(){ TurnOffAc(ac.GUEST_ROOM.deviceId)}, null, true, timeZone);
 
     //DiningRoom
-    new CronJob(ruleEverydayAt11pm, function(){ TurnOffAc(ac.DINING_ROOM.fields.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt11pm, function(){ TurnOffAc(ac.DINING_ROOM.deviceId)}, null, true, timeZone);
 
     //LivingRoom 
-    new CronJob(ruleEverydayAt2am, function(){ TurnOffAc(ac.LIVING_ROOM.fields.deviceId)}, null, true, timeZone);
-    new CronJob(ruleEverydayAt6am, function(){ TurnOnAc(ac.LIVING_ROOM.fields.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt2am, function(){ TurnOffAc(ac.LIVING_ROOM.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt6am, function(){ TurnOnAc(ac.LIVING_ROOM.deviceId)}, null, true, timeZone);
 }
 
 function TurnOnAc(deviceId) {
