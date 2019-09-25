@@ -5,8 +5,11 @@ var ac = require('../data/ac');
 //Everyday at 11pm
 var ruleEverydayAt11pm = '00 00 23 * * *';
 
+//Everyday at 10pm
+var ruleEverydayAt10pm = '00 00 22 * * *';
+
 //Everyday at 10am
-var ruleEverydayAt10am = '00 00 10 * * *';
+var ruleEverydayAt11am = '00 00 11 * * *';
 
 //Everyday at 2am
 var ruleEverydayAt2am = '00 00 2 * * *';
@@ -19,8 +22,8 @@ var timeZone = "Asia/Singapore";
 exports.scheduledJobs = () => {
     //MasterRoom
 
-    new CronJob(ruleEverydayAt11pm, function(){ TurnOnAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
-    new CronJob(ruleEverydayAt10am, function(){ TurnOffAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt10pm, function(){ TurnOnAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt11am, function(){ TurnOffAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
 
     //GuestRoom
     new CronJob(ruleEverydayAt11pm, function(){ TurnOffAc(ac.GUEST_ROOM.deviceId)}, null, true, timeZone);
