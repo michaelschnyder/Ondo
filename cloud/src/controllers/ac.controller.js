@@ -99,7 +99,7 @@ var SendAcSettingToAzure = function (deviceId, devicePower, targetTempC, quiteOn
     });
 }
 
-exports.TurnOnAc = (deviceId) => {
+var TurnOnAc = function(deviceId) {
     console.log(`Device with DeviceId: ${deviceId}, Turn On Ac`);
     var devicePower = 1;
     var targetTempC = 24;
@@ -111,7 +111,7 @@ exports.TurnOnAc = (deviceId) => {
     SendAcSettingToAzure(deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn);
 }
 
-exports.TurnOffAc = (deviceId) => {
+var TurnOffAc = function(deviceId) {
     console.log(`Device with DeviceId: ${deviceId}, Turn Off Ac`)
     var devicePower = 0;
     var targetTempC = 24;
@@ -128,6 +128,8 @@ module.exports = {
     sendAcSetting: sendAcSetting,
     getAcSettings: getAcSettings,
     turnOff: turnOff,
-    turnOn: turnOn
+    turnOn: turnOn,
+    TurnOffAc: TurnOffAc,
+    TurnOnAc: TurnOnAc
 }
 
