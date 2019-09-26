@@ -22,40 +22,16 @@ var timeZone = "Asia/Singapore";
 exports.scheduledJobs = () => {
     //MasterRoom
 
-    new CronJob(ruleEverydayAt10pm, function(){ TurnOnAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
-    new CronJob(ruleEverydayAt11am, function(){ TurnOffAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt10pm, function(){ acController.TurnOnAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt11am, function(){ acController.TurnOffAc(ac.MASTER_ROOM.deviceId)}, null, true, timeZone);
 
     //GuestRoom
-    new CronJob(ruleEverydayAt11pm, function(){ TurnOffAc(ac.GUEST_ROOM.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt11pm, function(){ acController.TurnOffAc(ac.GUEST_ROOM.deviceId)}, null, true, timeZone);
 
     //DiningRoom
-    new CronJob(ruleEverydayAt11pm, function(){ TurnOffAc(ac.DINING_ROOM.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt11pm, function(){ acController.TurnOffAc(ac.DINING_ROOM.deviceId)}, null, true, timeZone);
 
     //LivingRoom 
-    new CronJob(ruleEverydayAt2am, function(){ TurnOffAc(ac.LIVING_ROOM.deviceId)}, null, true, timeZone);
-    new CronJob(ruleEverydayAt6am, function(){ TurnOnAc(ac.LIVING_ROOM.deviceId)}, null, true, timeZone);
-}
-
-function TurnOnAc(deviceId) {
-    console.log(`Device with DeviceId: ${deviceId}, Turned On Ac`);
-    var devicePower = 1;
-    var targetTempC = 24;
-    var quiteOn = true;
-    var powerfulOn = false;
-    var fanMode = 1;
-    var swingVOn = false;
-    var swingHOn = false;
-    acController.SendAcSettingToAzure(deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn);
-}
-
-function TurnOffAc(deviceId) {
-    console.log(`Device with DeviceId: ${deviceId}, Turned Off Ac`)
-    var devicePower = 0;
-    var targetTempC = 24;
-    var quiteOn = true;
-    var powerfulOn = false;
-    var fanMode = 1;
-    var swingVOn = false;
-    var swingHOn = false;
-    acController.SendAcSettingToAzure(deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn);
+    new CronJob(ruleEverydayAt2am, function(){ acController.TurnOffAc(ac.LIVING_ROOM.deviceId)}, null, true, timeZone);
+    new CronJob(ruleEverydayAt6am, function(){ acController.TurnOnAc(ac.LIVING_ROOM.deviceId)}, null, true, timeZone);
 }
