@@ -56,7 +56,7 @@ private:
     void publishCurrentSensorReadings();
 public:
     Application();   
-    void boostrap();
+    void bootstrap();
     void loop();    
 };
 

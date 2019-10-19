@@ -7,7 +7,7 @@ Application::Application(): dakinir(IRPIN), sensorReader(DHTPIN, DHTTYPE), azure
   
 }
 
-void Application::boostrap() {
+void Application::bootstrap() {
   
   setGeneratedDeviceId();
   startupBanner();
