@@ -2,3 +2,6 @@ device/src/embedded/build/
 device/src/embedded/.vscode/ipch/
 device/src/embedded/.vs/
 device/src/config-writer/data/config.json
+.vs/
+obj/
+bin/
