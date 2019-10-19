@@ -52,15 +52,19 @@ var sendAcSetting = function (req, res) {
 };
 
 var turnOff = function(req, res){
-    console.log("turnOff");
-    TurnOffAc(ac_data.MASTER_ROOM);
-    TurnOffAc(ac_data.DINING_ROOM);
-    TurnOffAc(ac_data.GUEST_ROOM);
-    TurnOffAc(ac_data.LIVING_ROOM);
+    console.warn("Turning off all aircons");
+    TurnOffAc(ac_data.MASTER_ROOM.deviceId);
+    TurnOffAc(ac_data.DINING_ROOM.deviceId);
+    TurnOffAc(ac_data.GUEST_ROOM.deviceId);
+    TurnOffAc(ac_data.LIVING_ROOM.deviceId);
 }
 
 var turnOn = function(req, res){
-    TurnOnAc(ac_data.LIVING_ROOM);
+    console.warn("All aircons are turning on now.")
+    TurnOnAc(ac_data.MASTER_ROOM.deviceId);
+    TurnOnAc(ac_data.DINING_ROOM.deviceId);
+    TurnOnAc(ac_data.GUEST_ROOM.deviceId);
+    TurnOnAc(ac_data.LIVING_ROOM.deviceId);
 }
 
 var SendAcSettingToAzure = function (deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn) {
@@ -70,13 +74,13 @@ var SendAcSettingToAzure = function (deviceId, devicePower, targetTempC, quiteOn
             return err;
         }
         else {
-            console.log('client opened');
+            console.debug('client opened');
             registry.getTwin(deviceId, async (err, twin) => {
                 if (err) {
                     return err;
                 }
                 else {
-                    console.log('Got device twin');
+                    console.debug('Got device twin');
                 }
                 var twinPatchAc = {
                     properties: {

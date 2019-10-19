@@ -39,7 +39,7 @@ exports.getTwins = (req, res) => {
             q.result.forEach(function (twin) {
                 //TODO: Add Location
                 var device = { deviceId: twin.deviceId }
-                devices.push(device.fields);
+                devices.push(device);
             });
             res.send(devices);
         }).catch(err => {
