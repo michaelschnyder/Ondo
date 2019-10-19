@@ -21,4 +21,8 @@ router.get('/ac', ac.getAcSettings);
 
 router.get('/devices', sensor.getTwins);
 
+router.get('/off', ac.turnOff);
+
+router.get('/on', ac.turnOn);
+
 module.exports = router;

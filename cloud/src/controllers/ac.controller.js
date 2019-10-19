@@ -1,5 +1,6 @@
 var Client = require('azure-iothub').Client;
 var Registry = require('azure-iothub').Registry;
+var ac_data = require('../data/ac');
 
 var connectionString = process.env.AZURE_CONNECTION_STRING;
 
@@ -50,6 +51,18 @@ var sendAcSetting = function (req, res) {
     }
 };
 
+var turnOff = function(req, res){
+    console.log("turnOff");
+    TurnOffAc(ac_data.MASTER_ROOM);
+    TurnOffAc(ac_data.DINING_ROOM);
+    TurnOffAc(ac_data.GUEST_ROOM);
+    TurnOffAc(ac_data.LIVING_ROOM);
+}
+
+var turnOn = function(req, res){
+    TurnOnAc(ac_data.LIVING_ROOM);
+}
+
 var SendAcSettingToAzure = function (deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn) {
     client.open(function (err) {
         if (err) {
@@ -86,9 +99,37 @@ var SendAcSettingToAzure = function (deviceId, devicePower, targetTempC, quiteOn
     });
 }
 
+var TurnOnAc = function(deviceId) {
+    console.log(`Device with DeviceId: ${deviceId}, Turn On Ac`);
+    var devicePower = 1;
+    var targetTempC = 24;
+    var quiteOn = true;
+    var powerfulOn = false;
+    var fanMode = 1;
+    var swingVOn = false;
+    var swingHOn = false;
+    SendAcSettingToAzure(deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn);
+}
+
+var TurnOffAc = function(deviceId) {
+    console.log(`Device with DeviceId: ${deviceId}, Turn Off Ac`)
+    var devicePower = 0;
+    var targetTempC = 24;
+    var quiteOn = true;
+    var powerfulOn = false;
+    var fanMode = 1;
+    var swingVOn = false;
+    var swingHOn = false;
+    SendAcSettingToAzure(deviceId, devicePower, targetTempC, quiteOn, powerfulOn, fanMode, swingVOn, swingHOn);
+}
+
 module.exports = {
     SendAcSettingToAzure: SendAcSettingToAzure,
     sendAcSetting: sendAcSetting,
-    getAcSettings: getAcSettings
+    getAcSettings: getAcSettings,
+    turnOff: turnOff,
+    turnOn: turnOn,
+    TurnOffAc: TurnOffAc,
+    TurnOnAc: TurnOnAc
 }
 
