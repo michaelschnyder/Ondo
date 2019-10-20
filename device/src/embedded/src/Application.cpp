@@ -191,8 +191,10 @@ void Application::publishCurrentSensorReadings() {
  StaticJsonBuffer<500> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
 
-  root["currentHumidity"] = lastSensorReading.humidity;
-  root["currentTempC"] = lastSensorReading.tempC;
+  JsonObject& sensor = root.createNestedObject("sensor");
+
+  sensor["humidity"] = lastSensorReading.humidity;
+  sensor["tempC"] = lastSensorReading.tempC;
   
   // Send as message to default event bus
   azureIoTMqttClient.send(root);
