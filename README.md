@@ -12,6 +12,18 @@ You might find them here or at other places
 * 5mm 940nm IR infrared LED Lamp (940nm, 1.2-1.4V, 100mA) [Electronicsfan Shop on AliExpress](https://www.aliexpress.com/item/50Pcs-5mm-940nm-IR-infrared-LED-Lamp/32224584146.html?spm=a2g0s.9042311.0.0.71404c4daJ73kf)
 * Double Side Prototype PCB Breadboard (40x60mm) [Electronicsfan  Shop on AliExpress](https://www.aliexpress.com/item/10PCS-Double-Side-Prototype-PCB-Bread-board-Tinned-Universal-4x6-cm-40x60-mm-FR4/32230580075.html?spm=a2g0s.9042311.0.0.71404c4daJ73kf)
 
+
+# How to
+
+## Flash the device in local network
+The firmware supports OTA via network interface. It's protected by a password, which has to be provided with the -p switch
+`espota.py -f ../build/embedded.ino.bin -a PASSWORD -r -i [IP-Address]` 
+
+### Troubleshooting
+Solve **[ERROR]: No response from device** problems
+1. Make sure that the firewall allowes phyton.exe to communicate in both private and public networks, as it opens as server to which the ESP8266 will connect to
+2. Make sure that you are in the same network as the device, or that the device can at least communicate to your device over TCP/IP
+
 # Resources
 
 ## ESP8266

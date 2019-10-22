@@ -54,9 +54,10 @@ private:
     void updateCurrentAcState(JsonObject&);
     void sendAcStateToAircon();
     void publishCurrentSensorReadings();
+    void publishCurrentNetworkInfo();
 public:
     Application();   
-    void boostrap();
+    void bootstrap();
     void loop();    
 };
 

@@ -11,7 +11,7 @@ void setup() {
   while(!Serial) { }
   Serial.println();
   
-  app.boostrap();
+  app.bootstrap();
 }
 
 void loop() {

@@ -7,7 +7,7 @@ Application::Application(): dakinir(IRPIN), sensorReader(DHTPIN, DHTTYPE), azure
   
 }
 
-void Application::boostrap() {
+void Application::bootstrap() {
   
   setGeneratedDeviceId();
   startupBanner();
@@ -28,6 +28,8 @@ void Application::boostrap() {
   remoteUpdater.setup(deviceId);
   sensorReader.setup();
   azureIoTMqttClient.setup(deviceId);
+
+  publishCurrentNetworkInfo();
 }
 
 void Application::loop() {
@@ -38,9 +40,12 @@ void Application::loop() {
   sensorReader.loop();
 
   if(WiFi.status() != WL_CONNECTED) {
-
+    logger.warning("Wifi connection was interrupted. Trying to re-astablish connection.");
+    
     for(int i = 0; i < 12; i++) {
       if (connectToWifi()) {
+        logger.trace("Wifi connection successfully re-established.");
+        publishCurrentNetworkInfo();
         return;
       }
     }
@@ -89,7 +94,7 @@ void Application::setGeneratedDeviceId() {
   byte mac[6]; 
   WiFi.macAddress(mac);
 
-  sprintf(deviceId, "Ondo-%2x%2x%2x%2x%2x%2x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  sprintf(deviceId, "Ondo-%02x%02x%02x%02x%02x%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
 void Application::startupBanner() {
@@ -186,10 +191,35 @@ void Application::publishCurrentSensorReadings() {
  StaticJsonBuffer<500> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
 
-  root["currentHumidity"] = lastSensorReading.humidity;
-  root["currentTempC"] = lastSensorReading.tempC;
+  JsonObject& sensor = root.createNestedObject("sensor");
+
+  sensor["humidity"] = lastSensorReading.humidity;
+  sensor["tempC"] = lastSensorReading.tempC;
   
   // Send as message to default event bus
   azureIoTMqttClient.send(root);
+
+  // update reported property
+  azureIoTMqttClient.report(root);
+}
+
+void Application::publishCurrentNetworkInfo() {
+  StaticJsonBuffer<500> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+
+  JsonObject& network = root.createNestedObject("network");
+
+  network["mode"] = "wifi";
+  network["ssid"] = WiFi.SSID();
+  network["rssi"] = WiFi.RSSI();
+  network["mac"] = WiFi.macAddress();
+  network["ip"] = WiFi.localIP().toString();
+  network["subnet"] = WiFi.subnetMask().toString();
+  network["gateway"] = WiFi.gatewayIP().toString();
+
+  // Send as message to default event bus
+  azureIoTMqttClient.send(root);
+
+  // update reported property
   azureIoTMqttClient.report(root);
 }
