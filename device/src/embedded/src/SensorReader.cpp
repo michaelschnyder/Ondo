@@ -15,7 +15,10 @@ void SensorReader::loop() {
         // save the last time we read the data from sensor
         previousMillis = currentMillis;
 
-        updateReadings();
+        if (!updateReadings()) {
+            return;
+        }
+
         printLastReadingOnConsole();
 
         if (updateCallback != NULL) {
@@ -29,7 +32,7 @@ void SensorReader::onUpdate(MEASUREMENT_CALLBACK_SIGNATURE) {
     this->updateCallback = updateCallback;
 }
 
-void SensorReader::updateReadings() {
+bool SensorReader::updateReadings() {
 
     // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
     float h = sensor.readHumidity();
@@ -41,7 +44,7 @@ void SensorReader::updateReadings() {
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t) || isnan(f)) {
         logger.warning("Failed to read from DHT sensor!");
-        return;
+        return false;
     }
 
     humidity = h;
@@ -53,6 +56,8 @@ void SensorReader::updateReadings() {
 
     // Compute heat index in Celsius (isFahreheit = false)
     heatIndexC = sensor.computeHeatIndex(t, h, false);
+
+    return true;
 }
 
 void SensorReader::printLastReadingOnConsole() {

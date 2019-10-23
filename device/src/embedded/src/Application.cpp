@@ -2,6 +2,7 @@
 
 
 int wifiConnectionTimeoutInMs = 10000;
+int lastSensorUpdateSent = 0;
 
 Application::Application(): dakinir(IRPIN), sensorReader(DHTPIN, DHTTYPE), azureIoTMqttClient(Application::config) {
   
@@ -54,7 +55,7 @@ void Application::loop() {
     ESP.reset();
   }
 
-  if(millis() - lastSensorReading.lastUpdate >= 3600 * 60) {
+  if(millis() - lastSensorUpdateSent >= 3600 * 60) {
     publishCurrentSensorReadings();
   }
 }
@@ -131,9 +132,9 @@ void Application::wireEventHandlers() {
 void Application::handleSensorUpdate(float humidity, float tempC, float tempF, float heatIndexC, float heatIndexF) {
   
   bool hasChanged = (humidity != lastSensorReading.humidity || tempC != lastSensorReading.tempC);
-
-  if (hasChanged) {
-    lastSensorReading.lastUpdate = millis();
+  lastSensorReading.lastUpdate = millis();
+  
+  if (hasChanged) {   
     lastSensorReading.humidity = humidity;
     lastSensorReading.tempC = tempC;
 
@@ -201,6 +202,8 @@ void Application::publishCurrentSensorReadings() {
 
   // update reported property
   azureIoTMqttClient.report(root);
+
+  lastSensorUpdateSent = millis();
 }
 
 void Application::publishCurrentNetworkInfo() {

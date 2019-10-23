@@ -21,7 +21,7 @@ class SensorReader {
 
         MEASUREMENT_CALLBACK_SIGNATURE;
 
-        void updateReadings();
+        bool updateReadings();
         void printLastReadingOnConsole();
 
         log4Esp::Logger logger = log4Esp::Logger("SensorReader");
