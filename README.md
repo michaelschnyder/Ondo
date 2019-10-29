@@ -17,7 +17,7 @@ You might find them here or at other places
 
 ## Flash the device in local network
 The firmware supports OTA via network interface. It's protected by a password, which has to be provided with the -p switch
-`espota.py -f ../build/embedded.ino.bin -a PASSWORD -r -i [IP-Address]` 
+`%LOCALAPPDATA%\Arduino15\packages\esp8266\hardware\esp8266\2.5.2\tools\espota.py -f ../build/embedded.ino.bin -a PASSWORD -r -i [IP-Address]` 
 
 ### Troubleshooting
 Solve **[ERROR]: No response from device** problems
