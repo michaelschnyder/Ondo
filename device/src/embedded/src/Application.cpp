@@ -1,8 +1,9 @@
 #include "Application.h"
 
-
-int wifiConnectionTimeoutInMs = 10000;
+int const ONE_SECOND_IN_MS = 1000;
+int wifiConnectionTimeoutInMs = 10 * ONE_SECOND_IN_MS;
 int lastSensorUpdateSent = 0;
+int lastNetworkBSSIInfoSent = 0;
 
 Application::Application(): dakinir(IRPIN), sensorReader(DHTPIN, DHTTYPE), azureIoTMqttClient(Application::config) {
   
@@ -55,8 +56,12 @@ void Application::loop() {
     ESP.reset();
   }
 
-  if(millis() - lastSensorUpdateSent >= 3600 * 60) {
+  if(millis() - lastSensorUpdateSent >= 60 * ONE_SECOND_IN_MS) {
     publishCurrentSensorReadings();
+  }
+
+  if(millis() - lastNetworkBSSIInfoSent >= 3600 * ONE_SECOND_IN_MS) {
+    publishCurrentBSSIInfo();
   }
 }
 
@@ -225,4 +230,23 @@ void Application::publishCurrentNetworkInfo() {
 
   // update reported property
   azureIoTMqttClient.report(root);
+
+  lastNetworkBSSIInfoSent = millis();
+}
+
+void Application::publishCurrentBSSIInfo() {
+  StaticJsonBuffer<500> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+
+  JsonObject& network = root.createNestedObject("network");
+
+  network["mode"] = "wifi";
+  network["rssi"] = WiFi.RSSI();
+
+  // Send as message to default event bus
+  azureIoTMqttClient.send(root);
+
+  // update reported property
+  azureIoTMqttClient.report(root);
+  lastNetworkBSSIInfoSent = millis();
 }

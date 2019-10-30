@@ -55,6 +55,7 @@ private:
     void sendAcStateToAircon();
     void publishCurrentSensorReadings();
     void publishCurrentNetworkInfo();
+    void publishCurrentBSSIInfo();
 public:
     Application();   
     void bootstrap();
