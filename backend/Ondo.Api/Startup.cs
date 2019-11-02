@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Ondo.Api.Services;
 
 namespace Ondo.Api
 {
@@ -28,6 +23,13 @@ namespace Ondo.Api
             services.Configure<AzureConfiguration>(Configuration.GetSection("Azure"));
 
             services.AddControllers();
+
+            services.AddOptions();
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<DevicesService>().As<IDeviceService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
