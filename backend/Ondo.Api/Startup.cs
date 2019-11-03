@@ -30,6 +30,7 @@ namespace Ondo.Api
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterType<DevicesService>().As<IDeviceService>();
+            builder.RegisterType<AirConService>().As<IAirConService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

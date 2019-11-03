@@ -26,6 +26,15 @@ namespace Ondo.Api.Services
             return results.Select(Map);
         }
 
+        public async Task<Twin> GetDeviceFromAzureAsync(string id)
+        {
+            RegistryManager registryManager = RegistryManager.CreateFromConnectionString(_azureConfiguration.IoTHubConnectionString);
+            var query = registryManager.CreateQuery($"SELECT * FROM DEVICES WHERE deviceId = '{id}'");
+
+            var results = await query.GetNextAsTwinAsync();
+            return results.FirstOrDefault();
+        }
+
         private static DeviceDto Map(Twin twin)
         {
             var deviceDto = new DeviceDto
