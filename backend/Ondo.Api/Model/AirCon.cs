@@ -8,8 +8,6 @@
 
         public bool DevicePower { get; set; }
 
-        public int TargetTemp { get; set; }
-
         public bool QuietOn { get; set; }
 
         public bool PowerfulOn { get; set; }

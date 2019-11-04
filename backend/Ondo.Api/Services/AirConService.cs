@@ -35,11 +35,17 @@ namespace Ondo.Api.Services
             return _airConMapper.GetAirConFromTwin(twin);
         }
 
-        public async Task TurnAirConOn(AirCon airCon)
+        public async Task ChangeAirConSetting(AirCon airCon)
         {
             RegistryManager registryManager = RegistryManager.CreateFromConnectionString(_azureConfiguration.IoTHubConnectionString);
             var twin = await registryManager.GetTwinAsync(airCon.Id);
-            twin.Properties.Desired["devicePower"] =  airCon.DevicePower ? 1:0;
+            twin.Properties.Desired["targetTempC"] = airCon.TargetTempC;
+            twin.Properties.Desired["devicePower"] = airCon.DevicePower ? 1 : 0;
+            twin.Properties.Desired["swingHOn"] = airCon.SwingHOn ? 1 : 0;
+            twin.Properties.Desired["swingHOn"] = airCon.SwingHOn ? 1 : 0;
+            twin.Properties.Desired["danMode"] = airCon.FanMode;
+            twin.Properties.Desired["powerfulOn"] = airCon.PowerfulOn ? 1 : 0;
+            twin.Properties.Desired["quietOn"] = airCon.QuietOn ? 1 : 0;
             await registryManager.UpdateTwinAsync(airCon.Id, twin, twin.ETag);
         }
     }

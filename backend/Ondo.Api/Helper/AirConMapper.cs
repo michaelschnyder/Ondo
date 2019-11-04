@@ -25,14 +25,9 @@ namespace Ondo.Api.Helper
 
             if (twin.Properties.Desired.Contains("devicePower"))
             {
-                airCon.DevicePower = twin.Properties.Desired["quiteOn"] == 1;
+                airCon.DevicePower = twin.Properties.Desired["devicePower"] == 1;
             }
-
-            if (twin.Properties.Desired.Contains("targetTemp"))
-            {
-                airCon.TargetTemp = int.Parse(twin.Properties.Desired["targetTemp"].ToString());
-            }
-
+            
             if (twin.Properties.Desired.Contains("quiteOn"))
             {
                 airCon.QuietOn = twin.Properties.Desired["quiteOn"] == 1;

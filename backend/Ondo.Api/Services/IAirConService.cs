@@ -10,6 +10,6 @@ namespace Ondo.Api.Services
 
         Task<AirCon> GetAirCon(string deviceId);
 
-        Task TurnAirConOn(AirCon airCon);
+        Task ChangeAirConSetting(AirCon airCon);
     }
 }
