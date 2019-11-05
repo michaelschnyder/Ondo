@@ -1,0 +1,64 @@
+﻿@model Ondo.Api.Model.AirCon
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>
+    @Html.DisplayFor(model => model.Location)
+</h1>
+
+<h4>@Html.DisplayFor(model => model.Id)</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TargetTempC" class="control-label"></label>
+                <input asp-for="TargetTempC" class="form-control" />
+                <span asp-validation-for="TargetTempC" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FanMode" class="control-label"></label>
+                <input asp-for="FanMode" class="form-control" />
+                <span asp-validation-for="FanMode" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="DevicePower" /> @Html.DisplayNameFor(model => model.DevicePower)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="QuietOn" /> @Html.DisplayNameFor(model => model.QuietOn)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="PowerfulOn" /> @Html.DisplayNameFor(model => model.PowerfulOn)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="SwingVOn" /> @Html.DisplayNameFor(model => model.SwingVOn)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="SwingHOn" /> @Html.DisplayNameFor(model => model.SwingHOn)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

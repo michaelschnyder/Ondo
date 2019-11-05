@@ -5,6 +5,7 @@
     <UserSecretsId>55ccdaf5-db41-4e28-ba18-e7cd58baa2c7</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Azure.Devices" Version="1.18.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">

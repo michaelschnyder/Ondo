@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ondo.Mvc", "Ondo.Mvc\Ondo.Mvc.csproj", "{77A4950F-6BA2-4116-9C38-D430A4224A2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{AF6992C6-EF87-4DF2-AA4F-6440D092128F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF6992C6-EF87-4DF2-AA4F-6440D092128F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF6992C6-EF87-4DF2-AA4F-6440D092128F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77A4950F-6BA2-4116-9C38-D430A4224A2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77A4950F-6BA2-4116-9C38-D430A4224A2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77A4950F-6BA2-4116-9C38-D430A4224A2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77A4950F-6BA2-4116-9C38-D430A4224A2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
