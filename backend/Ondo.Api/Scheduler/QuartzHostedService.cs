@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Spi;
 
@@ -12,14 +14,13 @@ namespace Ondo.Api.Scheduler
         private readonly ISchedulerFactory _schedulerFactory;
         private readonly IJobFactory _jobFactory;
         private readonly IEnumerable<JobSchedule> _jobSchedules;
+        private readonly ILogger<QuartzHostedService> _logger;
 
-        public QuartzHostedService(
-            ISchedulerFactory schedulerFactory,
-            IJobFactory jobFactory,
-            IEnumerable<JobSchedule> jobSchedules)
+        public QuartzHostedService(ISchedulerFactory schedulerFactory, IJobFactory jobFactory, IEnumerable<JobSchedule> jobSchedules, ILogger<QuartzHostedService> logger)
         {
             _schedulerFactory = schedulerFactory;
             _jobSchedules = jobSchedules;
+            _logger = logger;
             _jobFactory = jobFactory;
         }
 
@@ -32,10 +33,18 @@ namespace Ondo.Api.Scheduler
 
             foreach (var jobSchedule in _jobSchedules)
             {
-                var job = CreateJob(jobSchedule);
-                var trigger = CreateTrigger(jobSchedule);
 
-                await Scheduler.ScheduleJob(job, trigger, cancellationToken);
+                try
+                {
+                    var job = CreateJob(jobSchedule);
+                    var trigger = CreateTrigger(jobSchedule);
+                    await Scheduler.ScheduleJob(job, trigger, cancellationToken);
+
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"Unable to register Job for airconId '{jobSchedule.AirConId}' with trigger {jobSchedule.CronExpression}. Error: {e.Message}");
+                }
             }
 
             await Scheduler.Start(cancellationToken);
