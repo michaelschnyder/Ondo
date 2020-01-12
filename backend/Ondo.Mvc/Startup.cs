@@ -90,10 +90,10 @@ namespace Ondo.Mvc
             services.AddJob(DiningRoomAirconId, false, RuleEverydayAt10pm);
             services.AddJob(DiningRoomAirconId, false, RuleWorkdayAt9am);
 
-            services.AddJob(LivingRoomAirconId, true, RuleEverydayAt2am);
-            services.AddJob(LivingRoomAirconId, false, RuleEverydayAt6am);
-            services.AddJob(LivingRoomAirconId, true, RuleWorkdayAt9am);
-            services.AddJob(LivingRoomAirconId, false, ruleWorkdayAt5pm);
+            services.AddJob(LivingRoomAirconId, false, RuleEverydayAt2am);
+            services.AddJob(LivingRoomAirconId, true, RuleEverydayAt6am);
+            services.AddJob(LivingRoomAirconId, false, RuleWorkdayAt9am);
+            services.AddJob(LivingRoomAirconId, true, ruleWorkdayAt5pm);
 
 
             services.AddHostedService<QuartzHostedService>();
