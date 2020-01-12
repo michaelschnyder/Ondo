@@ -73,7 +73,7 @@ namespace Ondo.Api.Scheduler
             return TriggerBuilder
                 .Create()
                 .WithIdentity($"{schedule.JobType.FullName + schedule.AirConId}.trigger-" + schedule.CronExpression)
-                .WithCronSchedule(schedule.CronExpression)
+                .WithCronSchedule(schedule.CronExpression, builder => builder.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time")))
                 .WithDescription(schedule.CronExpression)
                 .Build();
         }
