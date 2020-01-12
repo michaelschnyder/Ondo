@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -73,9 +74,21 @@ namespace Ondo.Api.Scheduler
             return TriggerBuilder
                 .Create()
                 .WithIdentity($"{schedule.JobType.FullName + schedule.AirConId}.trigger-" + schedule.CronExpression)
-                .WithCronSchedule(schedule.CronExpression, builder => builder.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time")))
+                .WithCronSchedule(schedule.CronExpression, builder => builder.InTimeZone(GetSingaporeTimeZone()))
                 .WithDescription(schedule.CronExpression)
                 .Build();
+        }
+
+        private static TimeZoneInfo GetSingaporeTimeZone()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
+            }
+            else
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById("Asia/Singapore");
+            }
         }
     }
 }
