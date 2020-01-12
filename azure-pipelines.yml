@@ -33,9 +33,16 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\webapp'
+    zipAfterPublish: false
+    
 - task: ArchiveFiles@1
   inputs:
-    rootFolder: 'backend/Ondo.Mvc/bin/Release/netcoreapp3.0'
+    rootFolder: '$(Build.ArtifactStagingDirectory)\webapp'
     includeRootFolder: false
     archiveType: 'default'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
