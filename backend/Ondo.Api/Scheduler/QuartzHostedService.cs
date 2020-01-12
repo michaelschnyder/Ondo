@@ -72,7 +72,7 @@ namespace Ondo.Api.Scheduler
         {
             return TriggerBuilder
                 .Create()
-                .WithIdentity($"{schedule.JobType.FullName}.trigger-" + schedule.CronExpression)
+                .WithIdentity($"{schedule.JobType.FullName + schedule.AirConId}.trigger-" + schedule.CronExpression)
                 .WithCronSchedule(schedule.CronExpression)
                 .WithDescription(schedule.CronExpression)
                 .Build();
