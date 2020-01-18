@@ -11,7 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Ondo.Api;
-using Ondo.Api.Services;
+using Ondo.Backend.Core;
+using Ondo.Backend.Core.Services;
 using Ondo.Mvc.Controllers;
 
 namespace Ondo.Backend

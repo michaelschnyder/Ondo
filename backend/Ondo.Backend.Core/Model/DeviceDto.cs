@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ondo.Api.Devices
+namespace Ondo.Backend.Core.Model
 {
     public class DeviceDto
     {

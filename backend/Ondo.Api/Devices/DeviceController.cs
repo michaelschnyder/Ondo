@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Ondo.Api.Services;
+using Ondo.Backend.Core.Model;
+using Ondo.Backend.Core.Services;
 
 namespace Ondo.Api.Devices
 {

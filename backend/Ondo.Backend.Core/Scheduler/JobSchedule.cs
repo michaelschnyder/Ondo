@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ondo.Api.Scheduler
+namespace Ondo.Backend.Core.Scheduler
 {
     public class JobSchedule
     {

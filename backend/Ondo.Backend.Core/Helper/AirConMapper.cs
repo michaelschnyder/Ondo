@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Devices.Shared;
-using Ondo.Api.Model;
+using Ondo.Backend.Core.Model;
 
-namespace Ondo.Api.Helper
+namespace Ondo.Backend.Core.Helper
 {
     public class AirConMapper
     {

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.Devices.Shared;
-using Ondo.Api.Devices;
+using Ondo.Backend.Core.Model;
 
-namespace Ondo.Api.Services
+namespace Ondo.Backend.Core.Services
 {
     public interface IDeviceService
     {

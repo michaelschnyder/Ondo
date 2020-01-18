@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Devices;
 using Microsoft.Extensions.Options;
-using Ondo.Api.Helper;
-using Ondo.Api.Model;
+using Ondo.Backend.Core.Helper;
+using Ondo.Backend.Core.Model;
 
-namespace Ondo.Api.Services
+namespace Ondo.Backend.Core.Services
 {
     public class AirConService : IAirConService
     {

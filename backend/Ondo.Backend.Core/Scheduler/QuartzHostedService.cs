@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Spi;
 
-namespace Ondo.Api.Scheduler
+namespace Ondo.Backend.Core.Scheduler
 {
     public class QuartzHostedService : IHostedService
     {

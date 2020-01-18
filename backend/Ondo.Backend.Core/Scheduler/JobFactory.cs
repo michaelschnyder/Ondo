@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Spi;
 
-namespace Ondo.Api.Scheduler
+namespace Ondo.Backend.Core.Scheduler
 {
     public class JobFactory : IJobFactory
     {

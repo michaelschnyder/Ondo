@@ -1,4 +1,4 @@
-﻿namespace Ondo.Api.Model
+﻿namespace Ondo.Backend.Core.Model
 {
     public class AirCon
     {

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Azure.Devices;
-using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using Microsoft.Azure.Devices;
 using Microsoft.Azure.Devices.Shared;
-using Ondo.Api.Devices;
+using Microsoft.Extensions.Options;
+using Ondo.Backend.Core.Model;
 
-namespace Ondo.Api.Services
+namespace Ondo.Backend.Core.Services
 {
     public class DevicesService : IDeviceService
     {

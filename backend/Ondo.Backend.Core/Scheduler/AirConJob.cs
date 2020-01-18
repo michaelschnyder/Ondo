@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Ondo.Api.Services;
+using Ondo.Backend.Core.Services;
 using Quartz;
 
-namespace Ondo.Api.Scheduler
+namespace Ondo.Backend.Core.Scheduler
 {
     public class AirConJob : IJob
     {

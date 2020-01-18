@@ -8,6 +8,7 @@ using Microsoft.Azure.Devices.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Ondo.Api.Devices;
+using Ondo.Backend.Core;
 
 namespace Ondo.Api
 {

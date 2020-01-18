@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Ondo.Api.Model;
+using Ondo.Backend.Core.Model;
 
-namespace Ondo.Api.Services
+namespace Ondo.Backend.Core.Services
 {
     public interface IAirConService
     {
