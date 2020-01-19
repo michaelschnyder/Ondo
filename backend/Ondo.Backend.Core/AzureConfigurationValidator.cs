@@ -17,11 +17,11 @@ namespace Ondo.Backend
             if (azureConfiguration == null || azureConfiguration.Value == null ||
                 azureConfiguration.Value.IoTHubConnectionString.IsNullOrWhiteSpace())
             {
-                LoggerExtensions.LogError(logger, "Unable to find AzureConfiguration or IoT Hub connection string.");
+                logger.LogError("Unable to find AzureConfiguration or IoT Hub connection string.");
             }
             else
             {
-                LoggerExtensions.LogInformation(logger, $"Application started. Configuration is {azureConfiguration.Value.IoTHubConnectionString}");
+                logger.LogInformation($"Application started. Configuration is {azureConfiguration.Value.IoTHubConnectionString}");
             }
         }
     }

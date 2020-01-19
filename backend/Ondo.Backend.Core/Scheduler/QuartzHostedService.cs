@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace Ondo.Backend.Core.Scheduler
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"Started {nameof(QuartzHostedService)} and processing registered Jobs from DI");
             Scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
             Scheduler.JobFactory = _jobFactory;
 
@@ -47,6 +49,8 @@ namespace Ondo.Backend.Core.Scheduler
                     _logger.LogError($"Unable to register Job for airconId '{jobSchedule.AirConId}' with trigger {jobSchedule.CronExpression}. Error: {e.Message}");
                 }
             }
+
+            _logger.LogInformation($"Starting Scheduler after {_jobSchedules.Count()} jobs have been registered.");
 
             await Scheduler.Start(cancellationToken);
         }
