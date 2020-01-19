@@ -3,9 +3,9 @@ using Microsoft.Azure.Devices.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Ondo.Backend.Core;
+using Ondo.Backend.Core.Configuration;
 
-namespace Ondo.Backend
+namespace Ondo.Backend.Core
 {
     public class AzureConfigurationValidator
     {

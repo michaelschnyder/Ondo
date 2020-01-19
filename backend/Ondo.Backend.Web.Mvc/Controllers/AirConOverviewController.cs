@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ondo.Backend.Core.Model;
 using Ondo.Backend.Core.Services;
 
-namespace Ondo.Mvc.Controllers
+namespace Ondo.Backend.Web.Mvc.Controllers
 {
     public class AirConOverviewController : Controller
     {

@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Ondo.Mvc.Controllers;
+using Ondo.Backend.Web.Mvc.Controllers;
 
-namespace Ondo.Mvc
+namespace Ondo.Backend.Web.Mvc
 {
     public static class OndoMvcFeature
     {

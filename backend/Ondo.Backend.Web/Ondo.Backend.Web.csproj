@@ -8,8 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ondo.Api\Ondo.Api.csproj" />
-    <ProjectReference Include="..\Ondo.Mvc\Ondo.Mvc.csproj" />
+    <ProjectReference Include="..\Ondo.Backend.Core\Ondo.Backend.Core.csproj" />
+    <ProjectReference Include="..\Ondo.Backend.Web.Api\Ondo.Backend.Web.Api.csproj" />
+    <ProjectReference Include="..\Ondo.Backend.Web.Mvc\Ondo.Backend.Web.Mvc.csproj" />
   </ItemGroup>
 
 </Project>

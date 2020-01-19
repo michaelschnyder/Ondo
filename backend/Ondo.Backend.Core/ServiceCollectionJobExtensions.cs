@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Ondo.Backend.Core.Scheduler;
 
-namespace Ondo.Mvc
+namespace Ondo.Backend.Core
 {
     public static class ServiceCollectionJobExtensions
     {

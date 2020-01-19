@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Devices;
 using Microsoft.Extensions.Options;
 using Ondo.Backend.Core;
+using Ondo.Backend.Core.Configuration;
 
 namespace Ondo.Api
 {

@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Ondo.Mvc.Models;
+using Ondo.Backend.Web.Mvc.Models;
 
-namespace Ondo.Mvc.Controllers
+namespace Ondo.Backend.Web.Mvc.Controllers
 {
     public class HomeController : Controller
     {

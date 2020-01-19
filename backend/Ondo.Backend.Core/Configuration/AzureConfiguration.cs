@@ -1,4 +1,4 @@
-﻿namespace Ondo.Backend.Core
+﻿namespace Ondo.Backend.Core.Configuration
 {
     public class AzureConfiguration
     {

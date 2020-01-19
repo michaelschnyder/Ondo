@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Devices;
 using Microsoft.Extensions.Options;
+using Ondo.Backend.Core.Configuration;
 using Ondo.Backend.Core.Helper;
 using Ondo.Backend.Core.Model;
 

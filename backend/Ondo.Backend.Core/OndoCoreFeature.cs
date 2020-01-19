@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Ondo.Backend.Core.Scheduler;
 using Ondo.Backend.Core.Services;
-using Ondo.Mvc;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;

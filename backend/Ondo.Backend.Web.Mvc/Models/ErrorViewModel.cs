@@ -1,4 +1,4 @@
-namespace Ondo.Mvc.Models
+namespace Ondo.Backend.Web.Mvc.Models
 {
     public class ErrorViewModel
     {

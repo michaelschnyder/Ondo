@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Devices;
 using Microsoft.Azure.Devices.Shared;
 using Microsoft.Extensions.Options;
+using Ondo.Backend.Core.Configuration;
 using Ondo.Backend.Core.Model;
 
 namespace Ondo.Backend.Core.Services

@@ -4,8 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Ondo.Backend.Core;
+using Ondo.Backend.Core.Configuration;
 
-namespace Ondo.Api
+namespace Ondo.Backend.Web.Mvc
 {
     public class Startup
     {
@@ -20,12 +21,11 @@ namespace Ondo.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AzureConfiguration>(Configuration.GetSection("Azure"));
-            
-            services.AddControllers();
 
-            services.AddOptions();
+            services.ConfigureOndoCore();
+            services.ConfigureOndoMvc();
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -34,16 +34,9 @@ namespace Ondo.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseOndoMvc(env);
         }
     }
 }

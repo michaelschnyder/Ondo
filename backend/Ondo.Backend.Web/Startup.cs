@@ -5,7 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Ondo.Api;
 using Ondo.Backend.Core;
-using Ondo.Mvc;
+using Ondo.Backend.Core.Configuration;
+using Ondo.Backend.Web.Mvc;
 
 namespace Ondo.Backend.Web
 {
