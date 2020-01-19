@@ -15,10 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ondo.Api\Ondo.Api.csproj" />
+    <EmbeddedResource Include="wwwroot\**\*" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="wwwroot\**\*" />
+    <ProjectReference Include="..\Ondo.Backend.Core\Ondo.Backend.Core.csproj" />
   </ItemGroup>
 </Project>

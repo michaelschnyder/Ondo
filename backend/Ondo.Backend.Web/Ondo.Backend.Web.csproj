@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ondo.Api\Ondo.Api.csproj" />
     <ProjectReference Include="..\Ondo.Mvc\Ondo.Mvc.csproj" />
   </ItemGroup>
 

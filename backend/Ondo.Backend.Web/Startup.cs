@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Ondo.Api;
 using Ondo.Backend.Core;
 using Ondo.Mvc;
 
@@ -24,6 +25,8 @@ namespace Ondo.Backend.Web
             services.Configure<AzureConfiguration>(Configuration.GetSection("Azure"));
 
             services.ConfigureOndoMvc();
+            services.ConfigureOndoApi();
+
             services.ConfigureOndoCore();
         }
 
@@ -39,6 +42,7 @@ namespace Ondo.Backend.Web
             app.UseAuthorization();
 
             app.UseOndoMvc(env);
+            app.UseOndoApi(env);
             app.ApplicationServices.ValidateOndoCore();
         }
     }
