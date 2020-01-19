@@ -1,18 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Azure.Devices.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Ondo.Api;
 using Ondo.Backend.Core;
-using Ondo.Backend.Core.Scheduler;
-using Ondo.Backend.Core.Services;
-using Quartz;
-using Quartz.Impl;
-using Quartz.Spi;
 
 namespace Ondo.Mvc
 {

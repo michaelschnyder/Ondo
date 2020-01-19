@@ -1,13 +1,9 @@
-﻿using System.Configuration;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Devices;
-using Microsoft.Azure.Devices.Shared;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Ondo.Api.Devices;
 using Ondo.Backend.Core;
 
 namespace Ondo.Api

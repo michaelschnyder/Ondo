@@ -1,5 +1,3 @@
-using System;
-
 namespace Ondo.Mvc.Models
 {
     public class ErrorViewModel
