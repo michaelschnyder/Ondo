@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Ondo.Backend
+namespace Ondo.Backend.Web
 {
     public class Program
     {

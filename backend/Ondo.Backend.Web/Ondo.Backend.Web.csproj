@@ -1,8 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>bb1086a3-c366-48ee-ab6b-d94baf934f23</UserSecretsId>
+    <AssemblyName>Ondo.Backend.Web</AssemblyName>
+    <RootNamespace>Ondo.Backend.Web</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

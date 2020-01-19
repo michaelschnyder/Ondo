@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Ondo.Backend.Core;
 using Ondo.Mvc;
 
-namespace Ondo.Backend
+namespace Ondo.Backend.Web
 {
     public class Startup
     {
