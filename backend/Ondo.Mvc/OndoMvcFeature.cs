@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +29,15 @@ namespace Ondo.Mvc
             }
             else
             {
-                env.WebRootFileProvider = new PhysicalFileProvider(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(OndoMvcFeature).Assembly.Location), "wwwroot")));
+                var allProviders = new List<IFileProvider>();
+                // Keep the existing provider
+                allProviders.Add(env.WebRootFileProvider);
+
+                // Add a manifest provider for each relevant path
+                allProviders.Add(new ManifestEmbeddedFileProvider(typeof(OndoMvcFeature).Assembly, "wwwroot"));
+
+                // Replacing the previous WebRootFileProvider by our new composite one
+                env.WebRootFileProvider = new CompositeFileProvider(allProviders);
 
                 app.UseExceptionHandler("/Home/Error");
             }
