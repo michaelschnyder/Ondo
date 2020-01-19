@@ -24,10 +24,12 @@ namespace Ondo.Mvc
 
                 var folderName = typeof(OndoMvcFeature).FullName.Substring(0, typeof(OndoMvcFeature).FullName.Length - nameof(OndoMvcFeature).Length - 1);
 
-                env.WebRootFileProvider = new PhysicalFileProvider(Path.GetFullPath($"..\\{folderName}\\wwwroot\\"));
+                env.WebRootFileProvider = new PhysicalFileProvider(Path.GetFullPath(Path.Combine("..", folderName, "wwwroot")));
             }
             else
             {
+                env.WebRootFileProvider = new PhysicalFileProvider(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(OndoMvcFeature).Assembly.Location), "wwwroot")));
+
                 app.UseExceptionHandler("/Home/Error");
             }
 
