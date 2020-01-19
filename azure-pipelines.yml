@@ -43,7 +43,7 @@ steps:
     
 - task: ArchiveFiles@1
   inputs:
-    rootFolder: '$(Build.ArtifactStagingDirectory)\publish'
+    rootFolder: '$(Build.ArtifactStagingDirectory)\publish\Ondo.Backend.Web'
     includeRootFolder: false
     archiveType: 'default'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
