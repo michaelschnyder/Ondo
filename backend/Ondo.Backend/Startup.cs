@@ -14,6 +14,7 @@ using Ondo.Api;
 using Ondo.Backend.Core;
 using Ondo.Backend.Core.Services;
 using Ondo.Mvc.Controllers;
+using Ondo.Mvc;
 
 namespace Ondo.Backend
 {
@@ -30,14 +31,10 @@ namespace Ondo.Backend
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var assembly = typeof(HomeController).Assembly;
-            services.AddControllersWithViews()
-                .AddApplicationPart(assembly);
-
             services.Configure<AzureConfiguration>(Configuration.GetSection("Azure"));
-            services.AddSingleton<IDeviceService, DevicesService>();
-            services.AddSingleton<IAirConService, AirConService>();
 
+            services.ConfigureOndoMvc();
+            services.ConfigureOndoCore();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,24 +42,14 @@ namespace Ondo.Backend
         {
             if (env.IsDevelopment())
             {
-                env.WebRootFileProvider = new PhysicalFileProvider(Path.GetFullPath("..\\Ondo.Mvc\\wwwroot\\"));
-
                 app.UseDeveloperExceptionPage();
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles(new StaticFileOptions() { });
-
-            app.UseRouting();
-
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=AirConOverview}/{action=Index}/{id?}");
-            });
+            app.UseOndoMvc(env);
+            app.ApplicationServices.ValidateOndoCore();
         }
     }
 }
