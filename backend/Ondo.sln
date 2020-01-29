@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ondo.Backend.Web.Api", "Ond
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ondo.Backend.Web.Mvc", "Ondo.Backend.Web.Mvc\Ondo.Backend.Web.Mvc.csproj", "{28F14ABD-A5B0-4DF8-A6AC-2169F3A02FA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ondo.WearableApp", "Ondo.WearableApp\Ondo.WearableApp\Ondo.WearableApp.csproj", "{5549FD5C-C39A-47F3-8D34-EF6034A7105F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ondo.WearableApp", "Ondo.WearableApp\Ondo.WearableApp.csproj", "{5549FD5C-C39A-47F3-8D34-EF6034A7105F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
