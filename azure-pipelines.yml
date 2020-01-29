@@ -37,7 +37,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: '**/*.csproj'
+    projects: '**/Ondo.backend.*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\publish'
     zipAfterPublish: false
     
@@ -60,3 +60,10 @@ steps:
   displayName: 'Publish Artifact: drop'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)\ArtifactsToBePublished'
+
+- task: XamarinAndroid@1
+  inputs:
+    projectFile: '**/*App.csproj'
+    outputDirectory: '$(Build.ArtifactStagingDirectory)\ArtifactsToBePublished'
+    configuration: 'release'
+    jdkOption: 'JDKVersion'
