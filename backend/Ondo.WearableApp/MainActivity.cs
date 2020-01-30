@@ -1,11 +1,10 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.Widget;
 using Android.OS;
 using Android.Support.Wearable.Activity;
 using Android.Views;
-using Ondo.Api.Devices;
 using GalaSoft.MvvmLight.Helpers;
+using Ondo.WearableApp.Model;
 
 namespace Ondo.WearableApp
 {
@@ -20,25 +19,25 @@ namespace Ondo.WearableApp
             SetAmbientEnabled();
 
             await Vm.GetData();
-            PeopleListView.Adapter = Vm.Devices.GetAdapter(GetPersonView);
+            AirconListView.Adapter = Vm.AirCons.GetAdapter(GetAirConView);
         }
 
-        private View GetPersonView(int position, DeviceDto device, View convertView)
+        private View GetAirConView(int position, AirConDto aircon, View convertView)
         {
             View view = convertView ?? LayoutInflater.Inflate(Resource.Layout.aircons, null);
+        
+            var airconItem = view.FindViewById<CheckBox>(Resource.Id.AirconItem);
 
-            var airconItem = view.FindViewById<TextView>(Resource.Id.AirconItem);
+            airconItem.Checked = aircon.DevicePower;
+            airconItem.Text = aircon.Location;
+            airconItem.SetCommand("Click", Vm.ChangeStateOfAirCon, aircon);
             
-            airconItem.Text = device.Location;
-            airconItem.Tag = device.DeviceId;
-            airconItem.SetCommand("Click", Vm.ChangeStateOfAirCon);
-
             return view;
         }
 
         private DeviceViewModel Vm => ViewModelLocator.Instance.DeviceViewModel;
 
-        private ListView PeopleListView => FindViewById<ListView>(Resource.Id.AirconList);
+        private ListView AirconListView => FindViewById<ListView>(Resource.Id.AirconList);
     }
 }
 

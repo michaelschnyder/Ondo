@@ -52,6 +52,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\AirconDto.cs" />
     <Compile Include="Model\DeviceDto.cs" />
     <Compile Include="ViewModel\DeviceViewModel.cs" />
     <Compile Include="MainActivity.cs" />

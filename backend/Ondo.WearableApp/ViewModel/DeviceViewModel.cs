@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using Ondo.Api.Devices;
-using System;
+using Ondo.WearableApp.Model;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -11,37 +10,38 @@ namespace Ondo.WearableApp
     {
         WebApiService webAPIService;
         public event PropertyChangedEventHandler PropertyChanged;
-        private ObservableCollection<DeviceDto> _devices;
-        public  RelayCommand ChangeStateOfAirCon;
+        private ObservableCollection<AirConDto> aircons;
+        public RelayCommand<AirConDto> ChangeStateOfAirCon;
 
-        public ObservableCollection<DeviceDto> Devices
+        public ObservableCollection<AirConDto> AirCons
         {
             get
             {
-                return _devices;
+                return aircons;
             }
             set
             {
-                _devices = value;
-                RaisepropertyChanged("Devices");
+                aircons = value;
+                RaisepropertyChanged("AirCons");
             }
         }
 
         public DeviceViewModel()
         {
             webAPIService = new WebApiService();
-            _devices = new ObservableCollection<DeviceDto>();
-            ChangeStateOfAirCon = new RelayCommand(ChangeState);
+            aircons = new ObservableCollection<AirConDto>();
+            ChangeStateOfAirCon = new RelayCommand<AirConDto>(ChangeState);
         }
 
-        private void ChangeState()
+        private async void ChangeState(AirConDto airConDto)
         {
-            webAPIService.ChangeStateOfAirCon();
+            airConDto.DevicePower = !airConDto.DevicePower;
+            await webAPIService.ChangeStateOfAirCon(airConDto);
         }
 
         public async Task GetData()
         {
-            Devices = await webAPIService.RefreshDataAsync();
+            AirCons = await webAPIService.RefreshDataAsync();
         }
         void RaisepropertyChanged(string propertyName)
         {
