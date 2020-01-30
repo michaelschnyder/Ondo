@@ -2,15 +2,16 @@
 using Android.Widget;
 using Android.OS;
 using Android.Support.Wearable.Activity;
-using Android.Views;
-using GalaSoft.MvvmLight.Helpers;
 using Ondo.WearableApp.Model;
+using Ondo.WearableApp.ViewModel;
+using System.Collections.Generic;
 
 namespace Ondo.WearableApp
 {
     [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class MainActivity : WearableActivity
     {
+        List<AirConDto> viewCollection = new List<AirConDto>();
         protected override async void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -19,25 +20,24 @@ namespace Ondo.WearableApp
             SetAmbientEnabled();
 
             await Vm.GetData();
-            AirconListView.Adapter = Vm.AirCons.GetAdapter(GetAirConView);
+            
+
+
+            LoadData();
+
+            ListView lst = FindViewById<ListView>(Resource.Id.AirconList);
+            lst.Adapter = new ListViewAdapter(this, viewCollection, Vm);
         }
 
-        private View GetAirConView(int position, AirConDto aircon, View convertView)
+        private void LoadData()
         {
-            View view = convertView ?? LayoutInflater.Inflate(Resource.Layout.aircons, null);
-        
-            var airconItem = view.FindViewById<CheckBox>(Resource.Id.AirconItem);
-
-            airconItem.Checked = aircon.DevicePower;
-            airconItem.Text = aircon.Location;
-            airconItem.SetCommand("Click", Vm.ChangeStateOfAirCon, aircon);
-            
-            return view;
+            foreach (var aircon in Vm.AirCons)
+            {
+                viewCollection.Add(aircon);
+            }
         }
 
         private DeviceViewModel Vm => ViewModelLocator.Instance.DeviceViewModel;
-
-        private ListView AirconListView => FindViewById<ListView>(Resource.Id.AirconList);
     }
 }
 
