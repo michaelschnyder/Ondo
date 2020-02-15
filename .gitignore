@@ -6,3 +6,4 @@ device/src/config-writer/data/config.json
 obj/
 bin/
 *.user
+build/
