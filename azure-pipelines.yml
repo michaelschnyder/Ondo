@@ -37,7 +37,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: '**/*.csproj'
+    projects: '**/Ondo.backend.*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\publish'
     zipAfterPublish: false
     
@@ -48,6 +48,13 @@ steps:
     archiveType: 'default'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
+
+- task: XamarinAndroid@1
+  inputs:
+    projectFile: '**/*App.csproj'
+    outputDirectory: '$(Build.ArtifactStagingDirectory)\ArtifactsToBePublished'
+    configuration: 'release'
+    jdkOption: 'JDKVersion'
 
 - task: CopyFiles@2
   displayName: 'Copy File to: $(TargetFolder)'
