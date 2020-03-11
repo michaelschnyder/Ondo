@@ -15,10 +15,18 @@
 #include "RemoteUpdater.h"
 #include "AppConfig.h"
 
-#define DHTPIN 0 //D3 = 0
 #define DHTTYPE DHT22   
+// OLD Board Layout
+// #define DHTPIN 0             // D3 = 0
+// New Board Layout
+#define DHTPIN 5               // D1 = GPIO5
 
-#define IRPIN 4 //D2 = 4
+
+// OLD Board Layout
+// #define IRPIN 4              // D2 = 4
+// NEW Board Layout
+#define IRPIN 15              // D8 = GPI15
+
 struct AcState { bool devicePower; int targetTempC; int fanMode = 1; bool quietOn = true; bool powerfulOn = false; bool swingHOn = false; bool swingVOn = false; };
 struct SensorReading { unsigned long lastUpdate; float tempC; float humidity; };
 class Application {
