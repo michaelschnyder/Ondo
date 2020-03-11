@@ -3,18 +3,19 @@
 #include <SD.h>
 
 // Pins for self Test
-#define DHTPIN 0              // D3 = GPIO0
+#define DHTPIN 5               // D1 = GPIO5
+
 #define DHTTYPE DHT22   
 
-#define LED_IR 4               // D2 = GPIO4
-#define LED_BUILTIN 2         // D4 = GPIO2
+#define LED_IR 15              // D8 = GPI15
+#define LED_BUILTIN 2          // D4 = GPIO2
 
 
-#define LED_RGB_RED_PIN   16  // D0 = GPIO16
-#define LED_RGB_GREEN_PIN 5   // D1 = GPIO5
-#define LED_RGB_BLUE_PIN  15   // D8 = GPIO15
+#define LED_RGB_RED_PIN   0    // D3 = GPIO0
+#define LED_RGB_GREEN_PIN 4    // D2 = GPIO5
+#define LED_RGB_BLUE_PIN  16   // D0 = GPI16
 
-#define CS_PIN  2
+#define CS_PIN 2               // D4 = GPIO02
 
 DHT sensor(DHTPIN, DHTTYPE);
 
@@ -41,7 +42,7 @@ void setup() {
   Serial.println(" * Built-In LED Pin");
   pinMode(LED_BUILTIN, OUTPUT);
 
-
+  
   Serial.println(" * Red RGB LED Pin");
   pinMode(LED_RGB_RED_PIN, OUTPUT);
   digitalWrite(LED_RGB_RED_PIN, HIGH); // Off
@@ -55,15 +56,27 @@ void setup() {
   Serial.println(" * Blue RGB LED Pin");
   pinMode(LED_RGB_BLUE_PIN, OUTPUT);
   digitalWrite(LED_RGB_BLUE_PIN, HIGH); // OFF
-
+  
   Serial.println();
   Serial.println();
-
 }
 
 void loop() {
-  selfTest();
-  delay(2000);
+  Serial.printf("Started Selftest@%i\n", millis());
+  Serial.println("================");
+
+  dhtSensorTest();
+  ledTest(LED_BUILTIN, "Built-In", 500, true);
+  ledTest(LED_IR, "Infrared", 500, false);
+  ledTest(LED_RGB_RED_PIN, "RGB: Red", 500, true);
+  ledTest(LED_RGB_GREEN_PIN, "RGB: Green", 500, true);
+  ledTest(LED_RGB_BLUE_PIN, "RGB: Blue", 500, true);
+
+  SdCardTest();
+
+  Serial.println();
+  Serial.println();
+  delay(1000);
 }
 
 void ledTest(int pin, String name, int duration, bool inverse) {
@@ -79,27 +92,16 @@ void ledTest(int pin, String name, int duration, bool inverse) {
   Serial.println();
 }
 
-void selfTest() {
-
-  Serial.printf("Started Selftest@%i\n", millis());
-  Serial.println("================");
-
+void dhtSensorTest() {
   Serial.println("DHT Sensor");
   Serial.printf(" * PIN %i\n", DHTPIN);
   Serial.printf(" * Type %i\n", DHTTYPE);
   Serial.printf(" * DHT22 Sensor.read(): %i\n", sensor.read());
   Serial.printf(" * Last measurement: Humidity=%4.2f, Temperature: %4.2f°C\n", sensor.readHumidity(), sensor.readTemperature());
   Serial.println();
+}
 
-  ledTest(LED_BUILTIN, "Built-In", 1000, true);
-  
-  ledTest(LED_IR, "Infrared", 1000, false);
-  
-  ledTest(LED_RGB_RED_PIN, "RGB: Red", 1000, true);
-  ledTest(LED_RGB_BLUE_PIN, "RGB: Blue", 1000, true);
-  ledTest(LED_RGB_GREEN_PIN, "RGB: Green", 1000, true);
-
-
+void SdCardTest() {
   Serial.println("SD Card");
 
 
