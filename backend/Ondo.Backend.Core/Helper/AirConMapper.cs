@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Devices.Shared;
+﻿using Microsoft.Azure.Devices;
+using Microsoft.Azure.Devices.Shared;
 using Ondo.Backend.Core.Model;
 
 namespace Ondo.Backend.Core.Helper
@@ -17,6 +18,11 @@ namespace Ondo.Backend.Core.Helper
             {
                 Id = twin.DeviceId,
             };
+
+            if (twin.ConnectionState.HasValue)
+            {
+                airCon.IsConnected = twin.ConnectionState.Value == DeviceConnectionState.Connected;
+            }
 
             if (twin.Tags.Contains("location"))
             {

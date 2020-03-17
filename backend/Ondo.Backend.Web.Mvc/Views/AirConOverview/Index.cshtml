@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>AirCon List</h1>
+<h1>AirCon Overview</h1>
 
 <script type="text/javascript">
     function postForm(airConId) {
@@ -36,34 +36,79 @@
         postForm(id.substr(0, id.indexOf('_')));
     }
 </script>
-<table class="table">
-    <tbody>
-        @foreach (var item in Model)
-        {
-            @using (Html.BeginForm("Index", "AirConOverview", FormMethod.Post, new { id = "indexForm" }))
-            {
-                <tr>
-                    @Html.HiddenFor(modelItem => item.Id, new { id = item.Id + "_id" })
-                    @Html.HiddenFor(modelItem => item.FanMode, new { id = item.Id + "_fanMode" })
-                    @Html.HiddenFor(modelItem => item.Location, new { id = item.Id + "_location" })
-                    @Html.HiddenFor(modelItem => item.PowerfulOn, new { id = item.Id + "_powerfulOn" })
-                    @Html.HiddenFor(modelItem => item.SwingHOn, new { id = item.Id + "_swingHOn" })
-                    @Html.HiddenFor(modelItem => item.SwingVOn, new { id = item.Id + "_swingVOn" })
-                    @Html.HiddenFor(modelItem => item.QuietOn, new { id = item.Id + "_quietOn" })
-                    <td class="col-md-auto">
-                        @Html.EditorFor(modelItem => item.DevicePower, new { htmlAttributes = new { @class = "form-control", onchange = "OnChangeEvent(id)", id = item.Id + "_devicePower" } })
-                    </td>
-                    <td class="col-md-auto">
-                        @Html.ActionLink(item.Location ?? "Test", "Edit", "AirConOverview", new { id = item.Id })
 
-                    </td>
-                    <td class="col-md-auto">
-                        @Html.EditorFor(modelItem => item.TargetTempC, new { htmlAttributes = new { @class = "form-control", id = item.Id + "_targetTempC", onchange = "OnChangeEvent(id)", min = 19, max = 26 } })
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-            }
-        }
-    </tbody>
-</table>
+@foreach (var item in Model)
+{
+    @using (Html.BeginForm("Index", "AirConOverview", FormMethod.Post, new {id = "indexForm"}))
+    {
+        <div class="row">
+
+            @Html.HiddenFor(modelItem => item.Id, new {id = item.Id + "_id"})
+            @Html.HiddenFor(modelItem => item.FanMode, new {id = item.Id + "_fanMode"})
+            @Html.HiddenFor(modelItem => item.Location, new {id = item.Id + "_location"})
+            @Html.HiddenFor(modelItem => item.PowerfulOn, new {id = item.Id + "_powerfulOn"})
+            @Html.HiddenFor(modelItem => item.SwingHOn, new {id = item.Id + "_swingHOn"})
+            @Html.HiddenFor(modelItem => item.SwingVOn, new {id = item.Id + "_swingVOn"})
+            @Html.HiddenFor(modelItem => item.QuietOn, new {id = item.Id + "_quietOn"})
+
+            <div class="col-2">
+                @Html.EditorFor(modelItem => item.DevicePower, new {htmlAttributes = new {@class = "form-control", onchange = "OnChangeEvent(id)", id = item.Id + "_devicePower"}})
+            </div>
+            <div class="col">
+                @Html.ActionLink(item.Location ?? "Test", "Edit", "AirConOverview", new {id = item.Id})
+
+            </div>
+            <div class="col">
+                @if (item.IsConnected)
+                {
+                    <span class="badge badge-success">Online</span>
+                }
+                else
+                {
+                    <span class="badge badge-danger">Offline</span>
+                }
+            </div>
+            <div class="col">
+                @Html.EditorFor(modelItem => item.TargetTempC, new {htmlAttributes = new {@class = "form-control", id = item.Id + "_targetTempC", onchange = "OnChangeEvent(id)", min = 19, max = 26}})
+            </div>
+
+        </div>
+    }
+}
+
+
+
+    @*<table class="table table-sm">
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    @using (Html.BeginForm("Index", "AirConOverview", FormMethod.Post, new { id = "indexForm" }))
+                    {
+                        <tr>
+                            @Html.HiddenFor(modelItem => item.Id, new { id = item.Id + "_id" })
+                            @Html.HiddenFor(modelItem => item.FanMode, new { id = item.Id + "_fanMode" })
+                            @Html.HiddenFor(modelItem => item.Location, new { id = item.Id + "_location" })
+                            @Html.HiddenFor(modelItem => item.PowerfulOn, new { id = item.Id + "_powerfulOn" })
+                            @Html.HiddenFor(modelItem => item.SwingHOn, new { id = item.Id + "_swingHOn" })
+                            @Html.HiddenFor(modelItem => item.SwingVOn, new { id = item.Id + "_swingVOn" })
+                            @Html.HiddenFor(modelItem => item.QuietOn, new { id = item.Id + "_quietOn" })
+                            <td class="col-md-auto">
+                                @Html.EditorFor(modelItem => item.DevicePower, new { htmlAttributes = new { @class = "form-control", onchange = "OnChangeEvent(id)", id = item.Id + "_devicePower" } })
+                            </td>
+                            <td class="col-md-auto">
+                                @Html.ActionLink(item.Location ?? "Test", "Edit", "AirConOverview", new { id = item.Id })
+
+                            </td>
+                            <td class="col-md-auto">
+                                @item.IsConnected
+                            </td>
+                            <td class="col-md-auto">
+                                @Html.EditorFor(modelItem => item.TargetTempC, new { htmlAttributes = new { @class = "form-control", id = item.Id + "_targetTempC", onchange = "OnChangeEvent(id)", min = 19, max = 26 } })
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>*@

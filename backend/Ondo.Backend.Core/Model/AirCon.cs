@@ -19,5 +19,7 @@
         public bool SwingHOn { get; set; }
 
         public int TargetTempC { get; set; }
+
+        public bool IsConnected { get; set; }
     }
 }
