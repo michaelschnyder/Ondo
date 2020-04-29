@@ -31,17 +31,17 @@ namespace Ondo.Backend.Core.Helper
 
             if (twin.Properties.Desired.Contains("devicePower"))
             {
-                airCon.DevicePower = twin.Properties.Desired["devicePower"] == 1;
+                airCon.DevicePower = twin.Properties.Desired["devicePower"];
             }
             
-            if (twin.Properties.Desired.Contains("quiteOn"))
+            if (twin.Properties.Desired.Contains("quietOn"))
             {
-                airCon.QuietOn = twin.Properties.Desired["quiteOn"] == 1;
+                airCon.QuietOn = twin.Properties.Desired["quietOn"];
             }
 
             if (twin.Properties.Desired.Contains("powerfulOn"))
             {
-                airCon.PowerfulOn = twin.Properties.Desired["powerfulOn"] == 1;
+                airCon.PowerfulOn = twin.Properties.Desired["powerfulOn"];
             }
 
             if (twin.Properties.Desired.Contains("fanMode"))
@@ -51,12 +51,12 @@ namespace Ondo.Backend.Core.Helper
 
             if (twin.Properties.Desired.Contains("swingVOn"))
             {
-                airCon.SwingVOn = twin.Properties.Desired["swingVOn"] == 1;
+                airCon.SwingVOn = twin.Properties.Desired["swingVOn"];
             }
 
             if (twin.Properties.Desired.Contains("swingHOn"))
             {
-                airCon.SwingHOn = twin.Properties.Desired["swingHOn"] == 1;
+                airCon.SwingHOn = twin.Properties.Desired["swingHOn"];
             }
 
             if (twin.Properties.Desired.Contains("targetTempC"))

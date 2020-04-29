@@ -41,12 +41,12 @@ namespace Ondo.Backend.Core.Services
             RegistryManager registryManager = RegistryManager.CreateFromConnectionString(_azureConfiguration.IoTHubConnectionString);
             var twin = await registryManager.GetTwinAsync(airCon.Id);
             twin.Properties.Desired["targetTempC"] = airCon.TargetTempC;
-            twin.Properties.Desired["devicePower"] = airCon.DevicePower ? 1 : 0;
-            twin.Properties.Desired["swingHOn"] = airCon.SwingHOn ? 1 : 0;
-            twin.Properties.Desired["swingHOn"] = airCon.SwingHOn ? 1 : 0;
-            twin.Properties.Desired["danMode"] = airCon.FanMode;
-            twin.Properties.Desired["powerfulOn"] = airCon.PowerfulOn ? 1 : 0;
-            twin.Properties.Desired["quietOn"] = airCon.QuietOn ? 1 : 0;
+            twin.Properties.Desired["devicePower"] = airCon.DevicePower;
+            twin.Properties.Desired["swingHOn"] = airCon.SwingHOn;
+            twin.Properties.Desired["swingVOn"] = airCon.SwingVOn;
+            twin.Properties.Desired["fanMode"] = airCon.FanMode;
+            twin.Properties.Desired["powerfulOn"] = airCon.PowerfulOn;
+            twin.Properties.Desired["quietOn"] = airCon.QuietOn;
             await registryManager.UpdateTwinAsync(airCon.Id, twin, twin.ETag);
         }
     }
