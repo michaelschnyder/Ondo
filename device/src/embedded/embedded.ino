@@ -1,7 +1,6 @@
 #include "src/Application.h"
 
 Application app;
-
 void setup() {
 
   Serial.begin(115200);
