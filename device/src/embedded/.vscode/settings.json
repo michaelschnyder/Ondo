@@ -58,5 +58,6 @@
         "cinttypes": "cpp",
         "regex": "cpp"
     },
+    "arduino.enableUSBDetection": false,
     "C_Cpp.errorSquiggles": "Enabled"
 }
