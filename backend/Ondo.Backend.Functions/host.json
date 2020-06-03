@@ -1,0 +1,19 @@
+{
+  "version": "2.0",
+  "logging": {
+    "console" : {
+      "includeScopes":  true 
+    },
+    "logLevel": {
+      "default": "Warning",
+      "Function.ProcessInboundEvents.User": "Debug"
+    },
+    "applicationInsights": {
+      "samplingExcludedTypes": "Request",
+      "samplingSettings": {
+        "isEnabled": true
+      }
+    }
+
+  }
+}

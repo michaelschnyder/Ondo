@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ondo.Backend.Web.Mvc", "Ond
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ondo.WearableApp", "Ondo.WearableApp\Ondo.WearableApp.csproj", "{5549FD5C-C39A-47F3-8D34-EF6034A7105F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ondo.Backend.Functions", "Ondo.Backend.Functions\Ondo.Backend.Functions.csproj", "{B1CBA69D-D65A-4584-AC59-855BBD185F8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{5549FD5C-C39A-47F3-8D34-EF6034A7105F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5549FD5C-C39A-47F3-8D34-EF6034A7105F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5549FD5C-C39A-47F3-8D34-EF6034A7105F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B1CBA69D-D65A-4584-AC59-855BBD185F8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1CBA69D-D65A-4584-AC59-855BBD185F8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1CBA69D-D65A-4584-AC59-855BBD185F8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1CBA69D-D65A-4584-AC59-855BBD185F8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
