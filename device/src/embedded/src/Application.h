@@ -10,6 +10,9 @@
 #include <ir_Daikin.h>
 #include <Log4Esp.h>
 
+#include <ESPAsyncTCP.h>
+#include "ESPAsyncWebServer.h"
+
 #include "AzureIoTMqttClient.h"
 #include "SensorReader.h"
 #include "RemoteUpdater.h"
@@ -34,6 +37,7 @@ private:
     SensorReader sensorReader;
     AzureIoTMqttClient azureIoTMqttClient;
     RemoteUpdater remoteUpdater;
+    AsyncWebServer server = AsyncWebServer(80);  
 
     AcState currentAcState;
     SensorReading lastSensorReading;
@@ -56,6 +60,7 @@ private:
     void publishCurrentSensorReadings();
     void publishCurrentNetworkInfo();
     void publishCurrentBSSIInfo();
+    void setupWebServer();
 public:
     Application();   
     void bootstrap();

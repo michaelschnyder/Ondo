@@ -14,7 +14,7 @@ void Application::bootstrap() {
   setGeneratedDeviceId();
   startupBanner();
   initializeFileSystem();
-
+  setupWebServer();
   wireEventHandlers();
 
   config.load();
@@ -28,6 +28,8 @@ void Application::bootstrap() {
   }
   
   remoteUpdater.setup(deviceId);
+  server.begin();
+
   sensorReader.setup();
   azureIoTMqttClient.setup(deviceId);
 
@@ -125,6 +127,13 @@ void Application::initializeFileSystem() {
   else {
       logger.trace("Filesystem ready for usage.");    
   }
+}
+
+void Application::setupWebServer() {
+
+  server.on("/status", HTTP_GET, [this](AsyncWebServerRequest *request){
+    request->send(200, "(text/plain", "Ready");
+  });
 }
 
 void Application::wireEventHandlers() {
