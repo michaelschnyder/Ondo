@@ -132,10 +132,32 @@ void Application::initializeFileSystem() {
 void Application::setupWebServer() {
 
   server.on("/status", HTTP_GET, [this](AsyncWebServerRequest *request){
-    request->send(200, "(text/plain", "Ready");
+    request->send(200, "text/plain", "Ready");
   });
 
-  server.serveStatic("/config.json", SPIFFS, "/config.json");
+  server.serveStatic("/api/config", SPIFFS, "/config.json");
+  server.serveStatic("/api/config2", SPIFFS, "/config2.json");
+
+  server.on("/api/config", HTTP_POST, [this](AsyncWebServerRequest *request){}, NULL, [this](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
+    
+    logger.trace("Received new configuration");
+    
+    char content[len];
+
+    for (size_t i = 0; i < len; i++) {
+        content[i] = data[i];
+        Serial.write(data[i]);
+    }
+
+    content[len] = '\0';
+    String c = String(content);
+    if (Application::config.update(c)) {
+      request->send(200, "text/plain", content);
+    }
+    else {
+      request->send(500, "text/plain", "Update of configuration failed.");
+    }
+  });
 }
 
 void Application::wireEventHandlers() {

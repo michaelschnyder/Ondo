@@ -39,6 +39,24 @@ void AppConfig::load() {
     logger.trace(F("Application configuration loaded."));
 }
 
+bool AppConfig::update(String& content) {
+
+    StaticJsonBuffer<512> jsonBuffer;
+    JsonObject &root = jsonBuffer.parseObject(content);
+
+    if (root.containsKey("wifiSSID") && root.containsKey("wifiKey")) {
+        File jsonFile = SPIFFS.open(AppConfig::filename, "w");
+        jsonFile.print(content);
+        jsonFile.close();
+    
+        load();
+
+        return true;
+    } 
+
+    return false;
+}
+
 String AppConfig::getWifiSSID() {
     return AppConfig::wifiSSID;
 }
