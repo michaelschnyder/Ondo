@@ -134,6 +134,8 @@ void Application::setupWebServer() {
   server.on("/status", HTTP_GET, [this](AsyncWebServerRequest *request){
     request->send(200, "(text/plain", "Ready");
   });
+
+  server.serveStatic("/config.json", SPIFFS, "/config.json");
 }
 
 void Application::wireEventHandlers() {
