@@ -136,7 +136,6 @@ void Application::setupWebServer() {
   });
 
   server.serveStatic("/api/config", SPIFFS, "/config.json");
-  server.serveStatic("/api/config2", SPIFFS, "/config2.json");
 
   server.on("/api/config", HTTP_POST, [this](AsyncWebServerRequest *request){}, NULL, [this](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
     
@@ -146,7 +145,6 @@ void Application::setupWebServer() {
 
     for (size_t i = 0; i < len; i++) {
         content[i] = data[i];
-        Serial.write(data[i]);
     }
 
     content[len] = '\0';

@@ -48,12 +48,15 @@ bool AppConfig::update(String& content) {
         File jsonFile = SPIFFS.open(AppConfig::filename, "w");
         jsonFile.print(content);
         jsonFile.close();
-    
+
+        logger.trace(F("Configuration updated."));
+
         load();
 
         return true;
     } 
 
+    logger.error(F("Configuration update failed!"));
     return false;
 }
 
