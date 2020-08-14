@@ -1,8 +1,9 @@
-#include "src/Application.h"
+#include <Arduino.h>
+#include "Application.h"
 
 Application app;
-void setup() {
 
+void setup() {
   Serial.begin(115200);
   Serial.setTimeout(2000);
 
