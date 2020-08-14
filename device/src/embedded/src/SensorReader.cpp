@@ -43,7 +43,7 @@ bool SensorReader::updateReadings() {
 
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t) || isnan(f)) {
-        logger.warning("Failed to read from DHT sensor!");
+        logger.warning(F("Failed to read from DHT sensor!"));
         return false;
     }
 
@@ -61,5 +61,5 @@ bool SensorReader::updateReadings() {
 }
 
 void SensorReader::printLastReadingOnConsole() {
-    logger.verbose("New Measurement. Humidity: %4.2f, Temperature:  %4.2f°C (%4.2f°F), Heat index: %4.2f°C (%4.2f°F)", humidity, tempC, tempF, heatIndexC, heatIndexF);
+    logger.verbose(F("New Measurement. Humidity: %4.2f, Temperature:  %4.2f°C (%4.2f°F), Heat index: %4.2f°C (%4.2f°F)"), humidity, tempC, tempF, heatIndexC, heatIndexF);
 }

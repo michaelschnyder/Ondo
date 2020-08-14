@@ -22,7 +22,7 @@ void Application::bootstrap() {
   setupWifi();
 
   if (!connectToWifi()) {
-    logger.fatal("Can't connect to WIFI. Restarting ESP in 2s");
+    logger.fatal(F("Can't connect to WIFI. Restarting ESP in 2s"));
     delay(2000);
     ESP.reset();
   }
@@ -44,17 +44,17 @@ void Application::loop() {
   sensorReader.loop();
 
   if(WiFi.status() != WL_CONNECTED) {
-    logger.warning("Wifi connection was interrupted. Trying to re-astablish connection.");
+    logger.warning(F("Wifi connection was interrupted. Trying to re-astablish connection."));
     
     for(int i = 0; i < 12; i++) {
       if (connectToWifi()) {
-        logger.trace("Wifi connection successfully re-established.");
+        logger.trace(F("Wifi connection successfully re-established."));
         publishCurrentNetworkInfo();
         return;
       }
     }
 
-    logger.fatal("Wifi connection failed and unable to reconnect after %d trials during %ds. Resetting.", 12, 12 * wifiConnectionTimeoutInMs / 1000);
+    logger.fatal(F("Wifi connection failed and unable to reconnect after %d trials during %ds. Resetting."), 12, 12 * wifiConnectionTimeoutInMs / 1000);
     ESP.reset();
   }
 
@@ -74,7 +74,7 @@ void Application::setupWifi() {
 
 bool Application::connectToWifi() { 
 
-  logger.trace("Connecting to WLAN with SSID '%s'. This may take some time...", config.getWifiSSID().c_str());
+  logger.trace(F("Connecting to WLAN with SSID '%s'. This may take some time..."), config.getWifiSSID().c_str());
 
   WiFi.begin(config.getWifiSSID(), config.getWifiKey());
   
@@ -90,11 +90,11 @@ bool Application::connectToWifi() {
   }
 
   if(isTimeout) {
-    logger.error("Could not connect to Wifi with SSID '%s' after %ds", config.getWifiSSID().c_str(), wifiConnectionTimeoutInMs / 1000);
+    logger.error(F("Could not connect to Wifi with SSID '%s' after %ds"), config.getWifiSSID().c_str(), wifiConnectionTimeoutInMs / 1000);
     return false;
   }
 
-  logger.trace("Connected, IP address: %s", WiFi.localIP().toString().c_str());
+  logger.trace(F("Connected, IP address: %s"), WiFi.localIP().toString().c_str());
   return true;
 }
 
@@ -106,26 +106,26 @@ void Application::setGeneratedDeviceId() {
 }
 
 void Application::startupBanner() {
-  logger.trace("Device Started");
-  logger.trace("-------------------------------------");
-  logger.trace("Device Id: %s", deviceId);
+  logger.trace(F("Device Started"));
+  logger.trace(F("-------------------------------------"));
+  logger.trace(F("(Device Id: %s)"), deviceId);
   logger.trace(__FILE__ " " __DATE__ " " __TIME__);
-  logger.trace("-------------------------------------");
+  logger.trace(F("-------------------------------------"));
 }
 
 void Application::initializeFileSystem() {
   if (!SPIFFS.begin()) {
-      logger.error("Unable to start filesystem. Formatting now as remediation action...");
+      logger.error(F("Unable to start filesystem. Formatting now as remediation action..."));
       if (!SPIFFS.format()) {
-        logger.error("Formatting failed. Unable to recover.");
+        logger.error(F("Formatting failed. Unable to recover."));
       }
       else {
-        logger.trace("Fomatting succeded. Restarting now.");
+        logger.trace(F("Fomatting succeded. Restarting now."));
         ESP.reset();
       }
   }
   else {
-      logger.trace("Filesystem ready for usage.");    
+      logger.trace(F("Filesystem ready for usage."));    
   }
 }
 

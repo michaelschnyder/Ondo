@@ -19,13 +19,13 @@ void RemoteUpdater::setup(String deviceId) {
             SPIFFS.end();
         }
 
-        logger.trace("Start updating " + type);
+        logger.trace("Start updating" + type);
     });
     ArduinoOTA.onEnd([this]() {
-        logger.trace("OTA Completed. Restarting.");
+        logger.trace(F("OTA Completed. Restarting."));
     });
     ArduinoOTA.onProgress([this](unsigned int progress, unsigned int total) {
-        logger.verbose("Flashing in progress. Done: %u%%\r", (progress / (total / 100)));
+        logger.verbose(F("Flashing in progress. Done: %u%%\r"), (progress / (total / 100)));
     });
     ArduinoOTA.onError([this](ota_error_t error) {
         if (error == OTA_AUTH_ERROR) {

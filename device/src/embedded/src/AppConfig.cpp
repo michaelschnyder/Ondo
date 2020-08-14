@@ -5,11 +5,11 @@ AppConfig::AppConfig() {
 
 void AppConfig::load() {
 
-    logger.verbose("Attempting to load configuration from '%s'", AppConfig::filename.c_str());
+    logger.verbose(F("Attempting to load configuration from '%s'"), AppConfig::filename.c_str());
 
     if (!SPIFFS.exists(AppConfig::filename)) {
         
-        logger.warning("Configuration file '%s' does not exist.", AppConfig::filename.c_str());
+        logger.warning(F("Configuration file '%s' does not exist."), AppConfig::filename.c_str());
         return;
     }
 
@@ -17,7 +17,7 @@ void AppConfig::load() {
     jsonFile = SPIFFS.open(AppConfig::filename, "r");
 
     if (!jsonFile) {
-        logger.error("Cannot open configuration file '%s'", AppConfig::filename.c_str());
+        logger.error(F("Cannot open configuration file '%s'"), AppConfig::filename.c_str());
         return;
     }
 
@@ -27,7 +27,7 @@ void AppConfig::load() {
     jsonFile.close();
 
     if (!root.success()) {
-        logger.error("failed to load application configuration.");
+        logger.error(F("failed to load application configuration."));
         return;
     }
 
@@ -36,7 +36,7 @@ void AppConfig::load() {
     strcpy(AppConfig::azIoTHubName, root["azIoTHubName"]);
     strcpy(AppConfig::azIoTSASToken, root["azIoTSASToken"]);
 
-    logger.trace("Application configuration loaded.");
+    logger.trace(F("Application configuration loaded."));
 }
 
 String AppConfig::getWifiSSID() {
