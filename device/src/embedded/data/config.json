@@ -1,6 +1,0 @@
-{
-	"wifiSSID": "Fas-IoT",
-	"wifiKey": "bluppblapp",
-	"azIoTHubName": "ondo-sea",
-	"azIoTSASToken": "SharedAccessSignature sr=ondo-sea.azure-devices.net%2Fdevices%2FOndo-3c71bf316330&sig=PSNSeX0Pzoux1fOnB2tU%2Fsf86ueZQlf3SvcKE9gmqAI%3D&se=1615206286"
-}
