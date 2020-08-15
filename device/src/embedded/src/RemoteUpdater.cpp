@@ -31,7 +31,7 @@ void RemoteUpdater::setup(String deviceId) {
         if (error == OTA_AUTH_ERROR) {
             logger.error("Error[%u]: %s", (int)error, "Auth Failed");
         } else if (error == OTA_BEGIN_ERROR) {
-            logger.error("Error[%u]: %s", (int)error, "Begin Failed");
+            logger.error("Error[%u]: %s. Free space %i", (int)error, "Begin Failed", (int) ESP.getFreeSketchSpace());
         } else if (error == OTA_CONNECT_ERROR) {
             logger.error("Error[%u]: %s", (int)error, "Connect Failed");
         } else if (error == OTA_RECEIVE_ERROR) {
