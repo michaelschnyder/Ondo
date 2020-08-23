@@ -21,7 +21,7 @@ The firmware supports OTA via network interface. It's protected by a password, w
 
 ### Troubleshooting
 Solve **[ERROR]: No response from device** problems
-1. Make sure that the firewall allowes phyton.exe to communicate in both private and public networks, as it opens as server to which the ESP8266 will connect to
+1. Make sure that the firewall allowes python.exe to communicate in both private and public networks, as it opens as server to which the ESP8266 will connect to
 2. Make sure that you are in the same network as the device, or that the device can at least communicate to your device over TCP/IP
 
 # Resources

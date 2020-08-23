@@ -44,12 +44,12 @@ void AzureIoTMqttClient::setup(String devId) {
     }
 
     if (i+1 < maxAttempts) {
-      logger.warning("Unable to connect to MQTT Server in attempt %d/%d. Retry in %ds...", i+1, maxAttempts, retryTimoutInMs/1000);
+      logger.warning(F("Unable to connect to MQTT Server in attempt %d/%d. Retry in %ds..."), i+1, maxAttempts, retryTimoutInMs/1000);
       delay(retryTimoutInMs);
     }
   }
 
-  logger.error("Initial connection to MQTT not successful. Will continue trying...");
+  logger.error(F("Initial connection to MQTT not successful. Will continue trying..."));
   lastReconnectAttempt = millis();
 }
 
@@ -58,27 +58,27 @@ void AzureIoTMqttClient::loadCACert() {
   // Load CA file from SPIFFS
   File ca = SPIFFS.open("/BaltimoreCyberTrustRoot.der", "r"); 
   if (!ca) {
-    logger.verbose("Failed to open ca ");
+    logger.verbose(F("Failed to open ca "));
   }
   else
-    logger.verbose("Success to open ca");
+    logger.verbose(F("Success to open ca"));
 
   delay(1000);
 
   // Set server CA file
   if(wifiClient.loadCACert(ca, ca.size())) {
-    logger.verbose("CA loaded to wifiClientSecure");
+    logger.verbose(F("CA loaded to wifiClientSecure"));
   }
   else {
-    logger.verbose("CA loading failed");
+    logger.verbose(F("CA loading failed"));
   }
 
   File ca2 = SPIFFS.open("/BaltimoreCyberTrustRoot.der", "r"); 
   if(wifiClient.loadCertificate(ca2, ca.size())) {
-    logger.verbose("cert loaded");
+    logger.verbose(F("cert loaded"));
   }
   else {
-    logger.verbose("cert failed");
+    logger.verbose(F("cert failed"));
   }
 
   wifiClient.setInsecure();
@@ -104,52 +104,52 @@ void AzureIoTMqttClient::callback(char* topic, byte* payload, unsigned int lengt
     return;
   }
 
-  logger.warning("Recieved message not handled: '%s'", buffer);
+  logger.warning(F("Recieved message not handled: '%s'"), buffer);
 }
 
 boolean AzureIoTMqttClient::connect() {
 
-  logger.trace("Attempting to connect to MQTT server...");
-  logger.verbose("URL: %s:%d, MQTT_MAX_PACKET_SIZE: %d", mqtt_server.c_str(), port, MQTT_MAX_PACKET_SIZE);  
+  logger.trace(F("Attempting to connect to MQTT server..."));
+  logger.verbose(F("URL: %s:%d, MQTT_MAX_PACKET_SIZE: %d"), mqtt_server.c_str(), port, MQTT_MAX_PACKET_SIZE);  
 
   AzureIoTMqttClient::client.setServer(mqtt_server.c_str(), port);
 
-  logger.verbose("Credentials: DeviceId: %s, User: %s, Pass: %s", deviceId.c_str(), mqtt_user.c_str(), AzureIoTMqttClient::config.getAzIoTSASToken().c_str());
+  logger.verbose(F("Credentials: DeviceId: %s, User: %s, Pass: %s"), deviceId.c_str(), mqtt_user.c_str(), AzureIoTMqttClient::config.getAzIoTSASToken().c_str());
 
   if (!client.connect(deviceId.c_str(), mqtt_user.c_str(), AzureIoTMqttClient::config.getAzIoTSASToken().c_str())) {
     char lastErrorText[64];
     int errorNo = AzureIoTMqttClient::wifiClient.getLastSSLError(lastErrorText, 64);
     
-    logger.fatal("Connection to MQTT failed!. Client-State: %d, lastSSLError: %d ('%s'). Next try in 5s", client.state(), errorNo, lastErrorText);  
+    logger.fatal(F("Connection to MQTT failed!. Client-State: %d, lastSSLError: %d ('%s'). Next try in 5s"), client.state(), errorNo, lastErrorText);  
 
     return false;    
   }
 
-  logger.trace("Connection established to '%s:%d'. Subscribing to topics: '%s', '%s', '%s'", mqtt_server.c_str(), port, inbound_topic.c_str(), reportingProp_topic, desiredProp_topic);      
+  logger.trace(F("Connection established to '%s:%d'. Subscribing to topics: '%s', '%s', '%s'"), mqtt_server.c_str(), port, inbound_topic.c_str(), reportingProp_topic, desiredProp_topic);      
     
   if(!client.subscribe(inbound_topic.c_str())) {
-    logger.fatal("Subscribe to event topic failed");
+    logger.fatal(F("Subscribe to event topic failed"));
     return false;
   }
 
   if(!client.subscribe(reportingProp_topic)) {
-    logger.error("Unable to subscribe to Reported Properties topic on '%s'", reportingProp_topic);
+    logger.error(F("Unable to subscribe to Reported Properties topic on '%s'"), reportingProp_topic);
     return false;
   }
 
   if(!client.subscribe(desiredProp_topic)) {
-    logger.error("Unable to subscribe to Desired Properties topic on '%s'", desiredProp_topic);
+    logger.error(F("Unable to subscribe to Desired Properties topic on '%s'"), desiredProp_topic);
     return false;
   }
 
-  logger.verbose("Subscribe to topic successful. Sending welcome message to '%s'", outbound_topic.c_str());  
+  logger.verbose(F("Subscribe to topic successful. Sending welcome message to '%s'"), outbound_topic.c_str());  
   
   if (!AzureIoTMqttClient::client.publish(outbound_topic.c_str(), "hello world")) {
-    logger.fatal("Unable to send welcome message!");
+    logger.fatal(F("Unable to send welcome message!"));
     return false;
   }
 
-  logger.verbose("Welcome message send successful");
+  logger.verbose(F("Welcome message send successful"));
   
   return true;
 }
@@ -180,10 +180,10 @@ bool AzureIoTMqttClient::handleReportedPropertyUpdateResponse(String topic) {
   int version = versionString.toInt();
 
   if (responseCode == "204") {
-    logger.verbose("Reported property update (Request: %i) accepted by broker. Response Code: %s. New Version: %i", requestId, responseCode.c_str(), version);
+    logger.verbose(F("Reported property update (Request: %i) accepted by broker. Response Code: %s. New Version: %i"), requestId, responseCode.c_str(), version);
   }
   else {
-    logger.warning("Reported Property (Request: %i) got rejected by broker. Response Code: %s", requestId, responseCode.c_str());
+    logger.warning(F("Reported Property (Request: %i) got rejected by broker. Response Code: %s"), requestId, responseCode.c_str());
   }
   
   return true;
@@ -199,7 +199,7 @@ bool AzureIoTMqttClient::handleDesiredPropertiesUpdate(String topic, char* paylo
     return false;
   }
 
-  logger.trace("Desired property change update");
+  logger.trace(F("Desired property change update"));
 
   DynamicJsonBuffer jsonBuffer;
   JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
@@ -218,7 +218,7 @@ bool AzureIoTMqttClient::handleCloudToDeviceCommand(String topic, char* payload,
   }
 
   String message = String(payload);
-  logger.verbose("New Message from Broker. Topic: '%s', Lenght: %d, Content: '%s'", topic.c_str(), length, message.c_str());
+  logger.verbose(F("New Message from Broker. Topic: '%s', Lenght: %d, Content: '%s'"), topic.c_str(), length, message.c_str());
 
   DynamicJsonBuffer jsonBuffer;
   JsonObject& jsonMessage = jsonBuffer.parseObject((char*)payload);
@@ -234,11 +234,11 @@ bool AzureIoTMqttClient::handleCloudToDeviceCommand(String topic, char* payload,
   String commandName = jsonMessage["cmd"];
 
   if (onCommandCallback != NULL) {
-    logger.trace("Dispatching execution of command '%s'", commandName.c_str());
+    logger.trace(F("Dispatching execution of command '%s'"), commandName.c_str());
     onCommandCallback(commandName, jsonMessage);
   }
   else {
-    logger.trace("No callback registered for command '%s'", commandName.c_str());
+    logger.trace(F("No callback registered for command '%s'"), commandName.c_str());
   }
 }
 
@@ -256,20 +256,20 @@ void AzureIoTMqttClient::reconnectIfNecessary() {
   if(clientReady && !client.connected()) {
     // The initial state was valid, means the connection did reset
     clientReady = false;
-    logger.warning("MQTT client got disconnected. Trying to reconnect.");
+    logger.warning(F("MQTT client got disconnected. Trying to reconnect."));
   }
 
   // Start a new connection attempt
-  logger.verbose("Starting new reconnect attempt.");
+  logger.verbose(F("Starting new reconnect attempt."));
   lastReconnectAttempt = millis();
    
   if(this->connect()) {
     clientReady = true;
-    logger.trace("Successfully re-established connection MQTT Server");
+    logger.trace(F("Successfully re-established connection MQTT Server"));
     return;
   }
 
-  logger.error("Re-establishing connection and initializing client failed.");
+  logger.error(F("Re-establishing connection and initializing client failed."));
 }
 
 void AzureIoTMqttClient::send(JsonObject& data) {
@@ -277,7 +277,7 @@ void AzureIoTMqttClient::send(JsonObject& data) {
   data.printTo(buffer);
 
   if(!AzureIoTMqttClient::client.publish(outbound_topic.c_str(), buffer)) {
-    logger.error("Unable to publish message '%s'", buffer);
+    logger.error(F("Unable to publish message '%s'"), buffer);
     }
 }
 
@@ -306,7 +306,7 @@ void AzureIoTMqttClient::report(PubSubClient &client, log4Esp::Logger &logger, S
   sprintf(topic, "$iothub/twin/PATCH/properties/reported/?$rid=%d", rid);
 
   if (!AzureIoTMqttClient::client.publish(topic, patch.c_str())) {
-    logger.error("Unable to publish Reported Property update to '%s'. Update was: '%s'", topic, patch.c_str());
+    logger.error(F("Unable to publish Reported Property update to '%s'. Update was: '%s'"), topic, patch.c_str());
   }
 }
 

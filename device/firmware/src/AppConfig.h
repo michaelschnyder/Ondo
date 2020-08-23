@@ -23,6 +23,7 @@ private:
 public:
     AppConfig();   
     void load();
+    bool update(String& content);
 
     String getWifiSSID();
     String getWifiKey();

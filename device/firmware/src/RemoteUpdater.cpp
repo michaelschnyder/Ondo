@@ -19,19 +19,19 @@ void RemoteUpdater::setup(String deviceId) {
             SPIFFS.end();
         }
 
-        logger.trace("Start updating " + type);
+        logger.trace("Start updating" + type);
     });
     ArduinoOTA.onEnd([this]() {
-        logger.trace("OTA Completed. Restarting.");
+        logger.trace(F("OTA Completed. Restarting."));
     });
     ArduinoOTA.onProgress([this](unsigned int progress, unsigned int total) {
-        logger.verbose("Flashing in progress. Done: %u%%\r", (progress / (total / 100)));
+        logger.verbose(F("Flashing in progress. Done: %u%%\r"), (progress / (total / 100)));
     });
     ArduinoOTA.onError([this](ota_error_t error) {
         if (error == OTA_AUTH_ERROR) {
             logger.error("Error[%u]: %s", (int)error, "Auth Failed");
         } else if (error == OTA_BEGIN_ERROR) {
-            logger.error("Error[%u]: %s", (int)error, "Begin Failed");
+            logger.error("Error[%u]: %s. Free space %i", (int)error, "Begin Failed", (int) ESP.getFreeSketchSpace());
         } else if (error == OTA_CONNECT_ERROR) {
             logger.error("Error[%u]: %s", (int)error, "Connect Failed");
         } else if (error == OTA_RECEIVE_ERROR) {
