@@ -4,17 +4,17 @@ namespace Ondo.Backend.Core.Scheduler
 {
     public class JobSchedule
     {
-        public JobSchedule(Type jobType, bool turnOn, string cronExpression, string airConId)
+        public JobSchedule(Type jobType, bool isAirConOn, string cronExpression, string airConId)
         {
             JobType = jobType;
-            TurnOn = turnOn;
+            IsAirConOn = isAirConOn;
             CronExpression = cronExpression;
             AirConId = airConId;
         }
         
         public Type JobType { get; }
 
-        public bool TurnOn { get; }
+        public bool IsAirConOn { get; }
 
         public string CronExpression { get; }
 

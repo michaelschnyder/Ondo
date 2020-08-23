@@ -21,10 +21,10 @@ namespace Ondo.Backend.Core.Scheduler
         {
             JobDataMap dataMap = context.JobDetail.JobDataMap;
             string airConId = dataMap.GetString("AirConId");
-            bool turnOn = dataMap.GetBooleanValue("TurnOn");
+            bool isAirConOn = dataMap.GetBooleanValue("IsAirConOn");
 
             var airCon = await _airConService.GetAirCon(airConId);
-            airCon.DevicePower = turnOn;
+            airCon.DevicePower = isAirConOn;
             
             Console.WriteLine("AirConJob Executed");
             _logger.LogInformation("AirConJob Executed!");

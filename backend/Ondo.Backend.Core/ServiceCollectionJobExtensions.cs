@@ -5,15 +5,15 @@ namespace Ondo.Backend.Core
 {
     public static class ServiceCollectionJobExtensions
     {
-        public static void AddJob(this IServiceCollection services, string AirConId, bool turnOn, string CronExpression)
+        public static void AddCollectionJob(this IServiceCollection services, string cronExpression)
         {
             services.AddSingleton(sp =>
             {
                 return new JobSchedule(
-                    airConId: AirConId,
-                    turnOn: turnOn,
-                    jobType: typeof(AirConJob),
-                    cronExpression: CronExpression);
+                    airConId: string.Empty,
+                    isAirConOn: true,
+                    jobType: typeof(CollectorJob),
+                    cronExpression: cronExpression);
             });
         }
     }

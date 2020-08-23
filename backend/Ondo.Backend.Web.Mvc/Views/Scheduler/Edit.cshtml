@@ -1,0 +1,93 @@
+﻿@model Ondo.Backend.Core.Model.JobScheduleEntity
+
+    <script>
+        window.onload = function() {
+            var cronExpression = document.getElementById("cronExpression").value;
+            var res = cronExpression.split(" ");
+            document.getElementById("time").value = res[2] + ":00";
+                        if (res[5] == "MON-FRI") {
+                document.getElementById("weekend").checked = false;
+                document.getElementById("weekday").checked = true;
+            } else if (res[5] == "SAT-SUN") {
+                document.getElementById("weekend").checked = true;
+                document.getElementById("weekday").checked = false;
+            } else {
+                document.getElementById("weekend").checked = true;
+                document.getElementById("weekday").checked = true;
+            }
+        }
+        function updateCron() {
+        var weekday = document.getElementById("weekday").checked;
+        var weekend = document.getElementById("weekend").checked;
+        var time = document.getElementById("time").value;
+        var hour = time.split(":")[0];
+        console.log("Weekday" + weekday);
+        console.log("Weekend" + weekend);
+        console.log("time" + hour);
+        if (weekday && weekend) {
+            var cronExpression = "0 0 " + hour + " ? * *";
+            document.getElementById("cronExpression").value = cronExpression;
+        }
+        else if (weekday) {
+            var cronExpression = "0 0 " + hour + " ? * MON-FRI";
+            document.getElementById("cronExpression").value = cronExpression;
+        } 
+        else if (weekend) {
+            var cronExpression = "0 0 " + hour + " ? * SAT-SUN";
+            document.getElementById("cronExpression").value = cronExpression;
+        }
+        else {
+            var cronExpression = "0 0 " + hour + " ? * *";
+            document.getElementById("cronExpression").value = cronExpression;
+        }
+    }
+    </script>
+
+<h4>JobScheduleEntity</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group form-check">
+                <input class="form-check-input" asp-for="IsJobOn" />
+                <label class="control-label">Job On</label>
+            </div>
+            <div class="form-group form-check">
+                <input class="form-check-input" asp-for="IsAirConOn" />
+                <label class="control-label">Turn On</label>
+            </div>
+            <div class="form-group">
+                <select asp-for="AirConId" asp-items="@(new SelectList(@ViewBag.SelectableAirCons,"Id","Location"))">
+                    
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="weekday" onclick="updateCron()" />
+                <label class="control-label">Weekday</label>
+                <input type="checkbox" id="weekend" onclick="updateCron()" />
+                <label class="control-label">Weekend</label>
+                <input type="time" id="time" onchange="updateCron()" value="12:00" />
+            </div>
+            <div class="form-group">
+                <input asp-for="CronExpression" class="form-control" id="cronExpression" />
+                <span asp-validation-for="CronExpression" class="text-danger"></span>
+            </div>
+            @Html.HiddenFor(m => m.PartitionKey)
+            @Html.HiddenFor(m => m.RowKey)
+            @Html.HiddenFor(m => m.Timestamp)
+            @Html.HiddenFor(m => m.JobType)
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

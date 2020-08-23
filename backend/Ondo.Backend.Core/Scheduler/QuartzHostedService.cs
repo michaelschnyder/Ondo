@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -36,13 +35,11 @@ namespace Ondo.Backend.Core.Scheduler
 
             foreach (var jobSchedule in _jobSchedules)
             {
-
                 try
                 {
-                    var job = CreateJob(jobSchedule);
-                    var trigger = CreateTrigger(jobSchedule);
+                    var job = JobCreator.CreateJob(jobSchedule);
+                    var trigger = JobCreator.CreateTrigger(jobSchedule);
                     await Scheduler.ScheduleJob(job, trigger, cancellationToken);
-
                 }
                 catch (Exception e)
                 {
@@ -58,41 +55,6 @@ namespace Ondo.Backend.Core.Scheduler
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             await Scheduler?.Shutdown(cancellationToken);
-        }
-
-        private static IJobDetail CreateJob(JobSchedule schedule)
-        {
-            var jobType = schedule.JobType;
-            return JobBuilder
-                .Create(jobType)
-                .WithIdentity(jobType.FullName + schedule.AirConId + schedule.CronExpression)
-                .WithDescription(jobType.Name)
-                .UsingJobData("AirConId", schedule.AirConId)
-                .UsingJobData("TurnOn", schedule.TurnOn)
-                .Build();
-            
-        }
-
-        private static ITrigger CreateTrigger(JobSchedule schedule)
-        {
-            return TriggerBuilder
-                .Create()
-                .WithIdentity($"{schedule.JobType.FullName + schedule.AirConId}.trigger-" + schedule.CronExpression)
-                .WithCronSchedule(schedule.CronExpression, builder => builder.InTimeZone(GetSingaporeTimeZone()))
-                .WithDescription(schedule.CronExpression)
-                .Build();
-        }
-
-        private static TimeZoneInfo GetSingaporeTimeZone()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
-            }
-            else
-            {
-                return TimeZoneInfo.FindSystemTimeZoneById("Asia/Singapore");
-            }
         }
     }
 }

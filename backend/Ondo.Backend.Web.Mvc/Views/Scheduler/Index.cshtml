@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Ondo.Backend.Core.Model.JobScheduleEntity>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IsJobOn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsAirConOn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CronExpression)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AirConId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsJobOn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsAirConOn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CronExpression)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            <td>
+                <form asp-action="Delete" asp-route-partitionKey="@item.PartitionKey" asp-route-rowKey="@item.RowKey">
+                    @Html.ActionLink("Edit", "Edit", new { partitionKey = item.PartitionKey, rowKey = item.RowKey }) |
+                    <a href="#" onclick="this.closest('form').submit();return false">Delete</a>
+                </form>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
