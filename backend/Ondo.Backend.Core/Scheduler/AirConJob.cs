@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Ondo.Backend.Core.Services;
 using Quartz;
@@ -26,8 +25,7 @@ namespace Ondo.Backend.Core.Scheduler
             var airCon = await _airConService.GetAirCon(airConId);
             airCon.DevicePower = isAirConOn;
             
-            Console.WriteLine("AirConJob Executed");
-            _logger.LogInformation("AirConJob Executed!");
+            _logger.LogInformation($"AirConJob Executed: Location: {airCon.Location}, AirConOn: {airCon.DevicePower}, {context.JobDetail.Description}, {context.Scheduler.SchedulerName}");
             
             await _airConService.ChangeAirConSetting(airCon);
         }

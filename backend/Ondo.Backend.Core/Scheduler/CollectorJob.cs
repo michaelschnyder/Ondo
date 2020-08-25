@@ -9,10 +9,10 @@ namespace Ondo.Backend.Core.Scheduler
 {
     public class CollectorJob : IJob
     {
-        private readonly ILogger<AirConJob> _logger;
+        private readonly ILogger<CollectorJob> _logger;
         private readonly ISchedulerService _schedulerService;
 
-        public CollectorJob(ILogger<AirConJob> logger, ISchedulerService schedulerService)
+        public CollectorJob(ILogger<CollectorJob> logger, ISchedulerService schedulerService)
         {
             _logger = logger;
             _schedulerService = schedulerService;
@@ -20,8 +20,12 @@ namespace Ondo.Backend.Core.Scheduler
 
         public async Task Execute(IJobExecutionContext context)
         {
-            await RemoveExistingAirConJobs(context);
+            _logger.LogInformation("Collector Job started");
 
+            _logger.LogInformation("CleanUp Jobs...");
+            await context.Scheduler.Clear();
+
+            _logger.LogInformation("GetAllJobScheduleEntities started");
             var airConJobs = _schedulerService.GetAllJobScheduleEntities();
 
             foreach (var airConJob in airConJobs)
@@ -49,22 +53,16 @@ namespace Ondo.Backend.Core.Scheduler
                 _logger.LogInformation($"New Job added: AirConId: {airConJob.AirConId}, IsAirConOn: {airConJob.IsAirConOn}, CronExpression: {airConJob.CronExpression}");
 
             }
-            await context.Scheduler.Start(CancellationToken.None);
+            await AddCollectorJob(context);
+
+            await context.Scheduler.Start();
             _logger.LogInformation("Successfully executed Collector Job");
         }
 
-        private static async Task RemoveExistingAirConJobs(IJobExecutionContext context)
+        private async Task AddCollectorJob(IJobExecutionContext context)
         {
-            var currentlyExecutingJobs = await context.Scheduler.GetCurrentlyExecutingJobs();
-
-            foreach (var job in currentlyExecutingJobs)
-            {
-                if (job.JobInstance is CollectorJob)
-                {
-                    continue;
-                }
-                await context.Scheduler.DeleteJob(job.JobDetail.Key);
-            }
+            var collectorJob = new JobSchedule(airConId: string.Empty, jobType: typeof(CollectorJob), isAirConOn: true, cronExpression: "0 * * ? * *");
+            await context.Scheduler.ScheduleJob(JobCreator.CreateJob(collectorJob), JobCreator.CreateTrigger(collectorJob), CancellationToken.None);
         }
     }
 }

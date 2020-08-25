@@ -25,7 +25,7 @@ namespace Ondo.Backend.Core
             services.AddSingleton<AirConJob>();
             services.AddSingleton<CollectorJob>();
 
-            services.AddCollectionJob("1/15/30/45 * * ? * *");
+            services.AddCollectionJob("0 * * ? * *");
 
             services.AddHostedService<QuartzHostedService>();
         }
