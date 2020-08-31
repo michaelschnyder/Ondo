@@ -62,6 +62,7 @@ namespace Ondo.Backend.Core.Scheduler
         private async Task AddCollectorJob(IJobExecutionContext context)
         {
             var collectorJob = new JobSchedule(airConId: string.Empty, jobType: typeof(CollectorJob), isAirConOn: true, cronExpression: "0 * * ? * *");
+            Thread.Sleep(1000);
             await context.Scheduler.ScheduleJob(JobCreator.CreateJob(collectorJob), JobCreator.CreateTrigger(collectorJob), CancellationToken.None);
         }
     }
